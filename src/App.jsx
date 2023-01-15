@@ -16,6 +16,7 @@ import ResetPassword from './pages/ResetPassword';
 import PageNotFound from './pages/PageNotFound';
 import CreateBook from './pages/app/create/book';
 import PaymentRedirect from './pages/PaymentRedirect';
+import Install from './pages/Install';
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
         <Route path="/create" element={<CreateBook />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/payment-redirect" element={<PaymentRedirect />} />
+        <Route path="/install" element={<Install />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

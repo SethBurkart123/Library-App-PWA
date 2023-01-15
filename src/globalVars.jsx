@@ -1,5 +1,5 @@
 const global = {
-  "pocketbaseUrl": "http://192.168.0.10:8090"
+  "pocketbaseUrl": "https://api.libraryapp.co"
 }
 
 export function getImageUrl(bookId, image) {
