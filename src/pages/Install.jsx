@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { styled } from '@mui/material/styles';
-import SwipeableViews from "react-swipeable-views-react-18-fix";
+//import SwipeableViews from "react-swipeable-views-react-18-fix";
 
 export default function Install() {
   const [value, setValue] = useState(0);
@@ -55,10 +55,10 @@ export default function Install() {
           <StyledTab icon={<Windows />} label="Windows" />
         </Tabs>
       </div>
-      <SwipeableViews
+      {/*<SwipeableViews
       axis={'x'}
       index={value}
-      onChangeIndex={handleChangeIndex}>
+      onChangeIndex={handleChangeIndex}>*/}
         <TabPanel value={value} index={0} dir={'x'}>
           <div className="px-4 text-white">
             Mac OS
@@ -79,7 +79,7 @@ export default function Install() {
             Windows
           </div>
         </TabPanel>
-      </SwipeableViews>
+      {/*</SwipeableViews>*/}
     </div>
   );
   
