@@ -478,7 +478,7 @@ export default function ViewBook(props) {
         ))}
         <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
       </div>
-      <div className="px-4 pb-32 bg-black/40 drop-shadow-strong">
+      <div className="px-4 pb-8 bg-black/40 drop-shadow-strong">
         <h2 className="text-3xl text-white">{props.data.name ? props.data.name : <span className="text-gray-100">Unknown Title</span>}
         <span className="font-light text-gray-300"> ({props.data.publishDate.split(' ')[0].split('-')[0]})</span></h2>
         <h2 className="text-2xl font-light text-white">Author: {props.data.author ? props.data.author : <>Unknown</>}</h2>

@@ -16,8 +16,8 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 
 export const global = {
   "pocketbaseDomain": 'https://api.libraryapp.co',
-  "homepageDomain": 'http://localhost:3000',
-  "appDomain": 'http://localhost:5173'
+  "homepageDomain": 'https://libraryapp.co',
+  "appDomain": 'https://app.libraryapp.co'
 }
 
 export function getImageUrl(bookId, image) {

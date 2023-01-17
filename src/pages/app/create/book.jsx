@@ -29,7 +29,7 @@ export default function createBook() {
       navigate('/setup');
     }
   }
-  checkSubscription();
+  useEffect(() => {checkSubscription()}, [])
 
   const [spineImage, setSpineImage] = useState();
   const [coverImage, setCoverImage] = useState();
