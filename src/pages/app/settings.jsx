@@ -3,11 +3,11 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react';
 import { UserIcon } from '@heroicons/react/24/outline';
 
-import global from '../../globalVars';
+import { global } from '../../globalVars';
 import Layout from '../../components/layout';
 
 export default function Settings() {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
   const [editUsername, setEditUsername] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
@@ -183,7 +183,7 @@ export default function Settings() {
           <a className='rounded-xl bg-black/40 flex flex-col w-full gap-2 px-4 py-2 pb-6 my-2 cursor-pointer'>
             <h3 className='text-xl font-bold'>Free trial!</h3>
             <p>{datePaid.toFixed(0)} days remaining</p>
-            <button className="fancy block w-full px-6 py-3 font-medium text-center text-black bg-white border border-transparent rounded-full" onClick={() => CancelSubscription().then(() => window.location.href = 'https://libraryapp.co/pricing')}>Cancel Now</button>
+            <button className="fancy block w-full px-6 py-3 font-medium text-center text-black bg-white border border-transparent rounded-full" onClick={() => CancelSubscription().then(() => window.location.href = global.homepageDomain+'/pricing')}>Cancel Now</button>
           </a>
           :
           <a onClick={() => {console.log(getCustomerPortalURL().then((URL) => window.location.href = URL))}} className="bg-black/40 w-fit flex gap-4 px-4 py-2 my-2 rounded-lg cursor-pointer">
@@ -210,8 +210,8 @@ export default function Settings() {
 }
       </div>
     </div>
-    <div className="flex items-center my-auto">
-      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='warning-button'>Sign Out</a>
+    <div className="flex items-center my-auto flex-col">
+      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='warning-button w-3/4 mt-12'>Sign Out</a>
     </div>
     </Layout>
   )

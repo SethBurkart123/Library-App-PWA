@@ -45,22 +45,22 @@ const Layout = (props) => {
 
 
   return (
-    <div className="w-screen h-screen overflow-hidden">
-      <img src={background} alt="background" className="-z-10 bottom-1/2 absolute object-cover w-screen h-screen translate-y-1/2" />
-      <div className="md:w-65vh bg-wood-side-dark flex flex-col justify-between w-screen h-screen mx-auto overflow-hidden" style={{boxShadow: "0px 7px 100px 80px rgba(0,0,0,1)"}}>
+    <>
+      <img src={background} alt="background" className="absolute object-cover min-h-screen translate-y-1/2 -z-10 bottom-1/2" />
+      <div className="flex flex-col justify-between w-screen h-screen mx-auto md:w-65vh bg-wood-side-dark" style={{boxShadow: "0px 7px 100px 80px rgba(0,0,0,1)"}}>
         <div className="sticky top-0 z-50">
-          <div className="backdrop-blur-sm h-4 -mt-4"></div>
+          <div className="h-4 -mt-4 backdrop-blur-sm"></div>
           {props.topbar}
         </div>
         {props.overlay}
-        <div ref={elementRef} className="pt-18 touch h-screen pb-48 overflow-y-scroll text-white bg-transparent">
-          <div className="md:w-65vh w-screen mx-auto">
+        <div ref={elementRef} className="h-screen pb-48 overflow-y-scroll text-white bg-transparent pt-18 touch fill">
+          <div className="w-screen mx-auto md:w-65vh">
             {props.children}
           </div>
         </div>
         <Footer />
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import Pocketbase from 'pocketbase';
-import global from '../globalVars';
+import { global } from '../globalVars';
 
 export default function Setup() {
-  const client = new Pocketbase(global.pocketbaseUrl);
+  const client = new Pocketbase(global.pocketbaseDomain);
   const [hasRun, setHasRun] = useState(true);
   
   const checkSubscription = async () => {

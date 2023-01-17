@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import SpinePreviewImage from "../../../images/spine.jpg";
 import CoverPreviewImage from "../../../images/spine.jpg";
 import CreateCollection from './collection';
-import global from '../../../globalVars';
+import global  from '../../../globalVars';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import Layout from '../../../components/layout';
 
 export default function createBook() {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
   
   /*
   2 individual file uploads that are required for the book images. 

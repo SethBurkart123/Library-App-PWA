@@ -6,7 +6,7 @@ import React, {
   lazy,
 } from 'react';
 import PocketBase from 'pocketbase';
-import global, { getThumbImageUrl } from '../../globalVars';
+import { getThumbImageUrl, global } from '../../globalVars';
 import { Borrower } from './../../components/borrower';
 import { Author } from '../../components/author';
 import noImage from '../../images/noImage.jpeg';
@@ -16,7 +16,7 @@ const CollectionMenuItem = lazy(() => import('./view/Collection'));
 const BookMenuItem = lazy(() => import('./view/Book'));
 
 export default React.memo(function Search() {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
   //if user is logged out,
   //redirect to signIn
   if (!client.authStore.isValid) {
@@ -25,7 +25,7 @@ export default React.memo(function Search() {
   const checkSubscription = async () => {
     const record = await client.collection('users').getOne(client.authStore.model.id, {});
     if (!record.createdSubscription) {
-      window.location.href = 'https://libraryapp.co/pricing';
+      window.location.href = global.homepageDomain+'/pricing';
     }
   }
   checkSubscription()

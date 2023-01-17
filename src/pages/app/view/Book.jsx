@@ -8,13 +8,13 @@ import SpinePreviewImage from "../../../images/spine.jpg";
 import CoverPreviewImage from "../../../images/spine.jpg";
 import noImage from '../../../images/noImage.jpeg';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
-import global, { getImageUrl, getThumbImageUrl } from '../../../globalVars';
+import { global, getImageUrl, getThumbImageUrl } from '../../../globalVars';
 import Layout from '../../../components/layout';
 
 
 export default function ViewBook(props) {
   const navigate = useNavigate();
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
   /*
   2 individual file uploads that are required for the book images. 
   Then there is one more file upload that is optional. 
@@ -362,7 +362,7 @@ export default function ViewBook(props) {
       <input className="input-text" type="date" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description</h2>
       <textarea maxLength={5000} rows="18" type="text" className="input-text" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span sclassName="italic text-gray-300">(optional)</span></h2>
       <div className="px-2 py-2 rounded-lg shadow-inner bg-black/40 backdrop-blur-sm">
         <div className="relative">
           <input maxLength={128} className="input-text" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />

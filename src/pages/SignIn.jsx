@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import global from '../globalVars';
 import background from '../images/background.webp';
+import InstallPrompt from '../components/installPrompt'
 
 import PocketBase from 'pocketbase';
 
 function SignIn() {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
 
   useEffect(() => {
     if (client.authStore.isValid) {
@@ -49,6 +50,7 @@ function SignIn() {
 
   return (
   <>
+    <InstallPrompt />
     <img src={background} alt="background" className="absolute object-cover min-h-screen translate-y-1/2 fade-in bottom-1/2" />
     <div className="flex justify-center items-center h-screen z-10 bg-[#0F252B] inner-shadow-main overflow-y-scroll touch" style={{boxShadow: "inset 0px 0px 200px 17px rgba(0,0,0,0.7)"}}>
       <div className="p-6 backdrop-blur-3xl bg-white/60 rounded-2xl" style={{boxShadow: "inset 0px 0px 50px -2px rgba(255,255,255,.7),0px 12px 100px 22px rgba(0,0,0,1)"}}>
