@@ -1,11 +1,11 @@
 import { React, useState, useEffect } from 'react';
 import Pocketbase from 'pocketbase';
-import global from '../globalVars';
+import { global } from '../globalVars';
 import background from '../images/background.webp';
 
 function ResetPassword() {
   //setup variables
-  const client = new Pocketbase(global.pocketbaseUrl);
+  const client = new Pocketbase(global.pocketbaseDomain);
   const [email, setEmail] = useState('');
 
   useEffect(() => {

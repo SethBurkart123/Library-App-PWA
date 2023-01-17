@@ -1,12 +1,30 @@
-const global = {
-  "pocketbaseUrl": "https://api.libraryapp.co"
+/*
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  export const global = {
+    "pocketbaseDomain": 'https://api.libraryapp.co',
+    "homepageDomain": 'http://localhost:3000',
+    "appDomain": 'http://localhost:5173'
+  }
+} else {
+  export const global = {
+    "pocketbaseDomain": 'https://api.libraryapp.co',
+    "homepageDomain": 'https://libraryapp.co',
+    "appDomain": 'https://app.libraryapp.co'
+  }
+}
+*/
+
+export const global = {
+  "pocketbaseDomain": 'https://api.libraryapp.co',
+  "homepageDomain": 'http://localhost:3000',
+  "appDomain": 'http://localhost:5173'
 }
 
 export function getImageUrl(bookId, image) {
-  return `${global.pocketbaseUrl}/api/files/3mvsgrp33oefapt/${bookId}/${image}`
+  return `${global.pocketbaseDomain}/api/files/3mvsgrp33oefapt/${bookId}/${image}`
 }
 export function getThumbImageUrl(bookId, image) {
-  return `${global.pocketbaseUrl}/api/files/3mvsgrp33oefapt/${bookId}/${image}?thumb=0x500`
+  return `${global.pocketbaseDomain}/api/files/3mvsgrp33oefapt/${bookId}/${image}?thumb=0x500`
 }
 
 export default global;

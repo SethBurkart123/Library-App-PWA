@@ -1,5 +1,5 @@
 import { XCircleIcon } from "@heroicons/react/20/solid";
-import React, { useEffect } from "react";
+import React from "react";
 import { getImageUrl } from "../../../globalVars";
 
 export function Image({

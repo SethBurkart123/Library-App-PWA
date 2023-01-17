@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PocketBase from 'pocketbase';
-import global from '../globalVars';
+import { global } from '../globalVars';
 import background from '../images/background.webp';
 import Rive from '@rive-app/react-canvas';
+import InstallPrompt from '../components/installPrompt'
 
 function SignUp() {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
 
   //setup variables
   const [submitted, setSubmitted] = React.useState(false);
@@ -119,7 +120,7 @@ function SignUp() {
       if (paymentPlan) {
         window.location.href = `payment-redirect?paymentPlan=${paymentPlan}`
       } else {
-        window.location.href = 'https://libraryapp.co/pricing'; //redirect to pricing page
+        window.location.href = global.homepageDomain+'/pricing'; //redirect to pricing page
       }
     } catch(err) {
       setLoginError(true);
@@ -130,7 +131,8 @@ function SignUp() {
   
 
   return (
-    <>
+  <>
+  <InstallPrompt />
   <img src={background} alt="background" className="fade-in bottom-1/2 absolute object-cover min-h-screen translate-y-1/2" />
   <div className="flex flex-col justify-center items-center h-screen z-10 bg-[#0F252B] overflow-y-scroll touch pb-32 inner-shadow-main" style={{boxShadow: "inset 0px 0px 200px 17px rgba(0,0,0,0.7)"}}>
     <p className="pb-16 text-transparent">a </p>

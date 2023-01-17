@@ -1,6 +1,7 @@
 {
   "name": "simple-react",
   "version": "0.1.0",
+  "main": "src/main.jsx",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
@@ -17,6 +18,7 @@
     "formik": "^2.2.9",
     "pocketbase": "^0.8.4",
     "popmotion": "^11.0.5",
+    "pwa-install-handler": "^2.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-flatpickr": "^3.10.13",

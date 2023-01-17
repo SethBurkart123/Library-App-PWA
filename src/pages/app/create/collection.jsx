@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PocketBase from 'pocketbase';
 import { List, arrayMove, arrayRemove } from 'react-movable';
 import noImage from '../../../images/noImage.jpeg';
-import global, { getImageUrl } from '../../../globalVars';
+import {global, getImageUrl } from '../../../globalVars';
 
 const RemovableIcon = () => (
   <svg
@@ -42,7 +42,7 @@ const HamburgerIcon = () => (
 
 export default function CreateCollection() {
   const navigate = new useNavigate();
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
     
   const [search, setSearch] = useState('');
   

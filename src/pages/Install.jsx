@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { styled } from '@mui/material/styles';
-//import SwipeableViews from "react-swipeable-views-react-18-fix";
 
 export default function Install() {
   const [value, setValue] = useState(0);
@@ -25,20 +24,20 @@ export default function Install() {
       }
     }
     
-    if (currentPlatform.includes('Mac')) {
-      console.log('Mac OS');
-      handleChangeIndex(0);
-      console.log(checkStandalone());
-    } else if (currentPlatform.includes('iPad') || currentPlatform.includes('iPod') || currentPlatform.includes('iPhone')) {
+    if (currentPlatform.includes('iPad') || currentPlatform.includes('iPod') || currentPlatform.includes('iPhone')) {
       console.log('IOS');
-      handleChangeIndex(1);
+      handleChangeIndex(0);
       console.log(checkStandalone());
     } else if (currentPlatform.includes('Android')) {
       console.log('Android');
-      handleChangeIndex(2);
+      handleChangeIndex(1);
       console.log(checkStandalone());
     } else if (currentPlatform.includes('Win')) {
       console.log('Windows');
+      handleChangeIndex(2);
+      console.log(checkStandalone());
+    } else if (currentPlatform.includes('Mac')) {
+      console.log('Mac OS');
       handleChangeIndex(3);
       console.log(checkStandalone());
     }
@@ -47,39 +46,39 @@ export default function Install() {
 
   return (
     <div className="bg-secondary flex-col min-h-screen">
+      <div className="absolute top-2 right-2 text-white bg-secondary-400 p-2 z-10 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-14 h-14">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
       <div className="w-4/5 mx-auto">
         <Tabs variant="scrollable" value={value} onChange={handleChange} aria-label="icon label tabs example">
-          <StyledTab icon={<Mac />} label="Mac" />
           <StyledTab icon={<IOS />} label="IOS" />
           <StyledTab icon={<Android />} label="Android" />
           <StyledTab icon={<Windows />} label="Windows" />
+          <StyledTab icon={<Mac />} label="Mac" />
         </Tabs>
       </div>
-      {/*<SwipeableViews
-      axis={'x'}
-      index={value}
-      onChangeIndex={handleChangeIndex}>*/}
-        <TabPanel value={value} index={0} dir={'x'}>
-          <div className="px-4 text-white">
-            Mac OS
-          </div>
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={'x'}>
-          <div className="px-4 text-white">
-            IOS
-          </div>
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={'x'}>
-          <div className="px-4 text-white">
-            Android
-          </div>
-        </TabPanel>
-        <TabPanel value={value} index={3} dir={'x'}>
-          <div className="px-4 text-white">
-            Windows
-          </div>
-        </TabPanel>
-      {/*</SwipeableViews>*/}
+      <TabPanel value={value} index={0} dir={'x'}>
+        <div className="px-4 text-white">
+          IOS
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={1} dir={'x'}>
+        <div className="px-4 text-white">
+          Android
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={2} dir={'x'}>
+        <div className="px-4 text-white">
+          Windows
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={3} dir={'x'}>
+        <div className="px-4 text-white">
+          Macos
+        </div>
+      </TabPanel>
     </div>
   );
   

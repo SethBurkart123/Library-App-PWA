@@ -1,13 +1,13 @@
 import { List, arrayMove, arrayRemove } from 'react-movable';
 import noImage from '../../../images/noImage.jpeg';
-import global, { getImageUrl } from "../../../globalVars";
+import { getImageUrl, global } from "../../../globalVars";
 import PocketBase from 'pocketbase';
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/layout';
 
 export default function viewCollection(props) {
-  const client = new PocketBase(global.pocketbaseUrl);
+  const client = new PocketBase(global.pocketbaseDomain);
   const [deletePrompt, setDeletePrompt] = useState(false);
   const [editMode, setEditMode] = useState(false);
   return (
