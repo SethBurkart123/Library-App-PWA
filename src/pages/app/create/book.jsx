@@ -1,7 +1,6 @@
 import PocketBase from 'pocketbase';
 import React, { useState, useEffect, useRef } from 'react';
 import Compressor from 'compressorjs';
-import { useNavigate } from 'react-router-dom';
 import SpinePreviewImage from "../../../images/spine.jpg";
 import CoverPreviewImage from "../../../images/spine.jpg";
 import CreateCollection from './collection';
@@ -17,16 +16,15 @@ export default function createBook() {
   Then there is one more file upload that is optional. 
   It allows for the user to upload multiple images and remove them
   */
-  const navigate = useNavigate();
 
   if (!client.authStore.isValid) {
-    navigate('/signin');
+    window.location.href = '/signin';
   }
 
   const checkSubscription = async () => {
     const record = await client.collection('users').getOne(client.authStore.model.id, {});
     if (!record.createdSubscription) {
-      navigate('/setup');
+      window.location.href = '/';
     }
   }
   useEffect(() => {checkSubscription()}, [])
