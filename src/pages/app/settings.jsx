@@ -59,10 +59,10 @@ export default function Settings() {
 
   const submitPassword = async () => {
     if (passwordMatch) {
-      console.log("Passwords do not match!")
+      //console.log("Passwords do not match!")
       return "Passwords do not match";
     }
-    console.log("SUbmitting");
+    //console.log("SUbmitting");
     try {
       // example update data
       const data = {
@@ -79,7 +79,7 @@ export default function Settings() {
         loginWithEmail(email, newPassword);
       }
     } catch (err) {
-      console.log(err)
+      //console.log(err)
       setWrongPassword(true);
     }
   }
@@ -116,45 +116,45 @@ export default function Settings() {
   }, [])
   return(
     <Layout topbar={
-      <h1 className='flex flex-1 gap-2 px-4 pt-2 pb-2 text-2xl font-bold text-white border-b-2 border-b-white/20 inner-shadow-main bg-black/40 backdrop-blur-md'>
+      <h1 className='border-b-white/20 inner-shadow-main bg-black/40 backdrop-blur-md flex flex-1 gap-2 px-4 pt-2 pb-2 text-2xl font-bold text-white border-b-2'>
         <UserIcon className='h-6 my-auto' />
         Settings
       </h1>
     }>
     <div className="px-4">
       <div className="flex mb-8">
-        <p className="flex-1 text-lg font-medium text-gray-200/70">{editUsername ? <>Edit Name</> : <>Name<a onClick={() => setEditUsername(true)} className='pl-2 font-light cursor-pointer text-white/70'>(edit)</a></>}</p>
+        <p className="text-gray-200/70 flex-1 text-lg font-medium">{editUsername ? <>Edit Name</> : <>Name<a onClick={() => setEditUsername(true)} className='text-white/70 pl-2 font-light cursor-pointer'>(edit)</a></>}</p>
         {editUsername ?
         <div className="flex-1">
           <input placeholder='Username' autoComplete='username' type="text" className="input-text" value={name} onChange={(e) => setName(e.target.value)} />
           <div className="flex gap-4 pt-4">
-            <a onClick={() => {setEditUsername(false)}} className="ml-auto cursor-pointer secondary-button">Cancel</a>
-            <button type="submit" onClick={() => {setEditUsername(false), submitUsername()}} className="mr-0 primary-button bg-green-500/20">Submit</button>
+            <a onClick={() => {setEditUsername(false)}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
+            <button type="submit" onClick={() => {setEditUsername(false), submitUsername()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
           </div>
         </div> :
-        <p className="flex-1 mt-1 text-lg text-white sm:col-span-2 sm:mt-0">{name}</p>
+        <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg text-white">{name}</p>
         }
       </div>
       <div className="flex mb-8">
-        <p className="flex-1 text-lg font-medium text-gray-200/70">Email</p>
+        <p className="text-gray-200/70 flex-1 text-lg font-medium">Email</p>
         {editEmail ?
         <div className="flex-1">
           <input placeholder='Email' autoComplete='Email' type="text" className="input-text" value={email} onChange={(e) => setEmail(e.target.value)} />
           <div className="flex gap-4 pt-4">
-            <a onClick={() => {setEditEmail(false)}} className="ml-auto cursor-pointer secondary-button">Cancel</a>
-            <button type="submit" onClick={() => {setEditEmail(false), submitEmail()}} className="mr-0 primary-button bg-green-500/20">Submit</button>
+            <a onClick={() => {setEditEmail(false)}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
+            <button type="submit" onClick={() => {setEditEmail(false), submitEmail()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
           </div>
         </div> :
-        <p className="flex-1 mt-1 text-lg text-white sm:col-span-2 sm:mt-0">{email}</p>
+        <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg text-white">{email}</p>
         }
       </div>
       <div className="flex mb-8">
-        <p className="flex-1 text-lg font-medium text-gray-200/70">{editPassword ? <>Change Password</> : <>Password<a onClick={() => setEditPassword(true)} className='pl-2 font-light cursor-pointer text-white/70'>(change)</a></>}</p>
+        <p className="text-gray-200/70 flex-1 text-lg font-medium">{editPassword ? <>Change Password</> : <>Password<a onClick={() => setEditPassword(true)} className='text-white/70 pl-2 font-light cursor-pointer'>(change)</a></>}</p>
         {editPassword ?
         <div className="flex flex-col flex-1 gap-2">
           {wrongPassword ?
           <div className="relative px-4 py-3 mt-5 mb-2 text-red-700 bg-red-100 border border-red-600 rounded" role="alert">
-          <span className="block sm:inline">The password is not correct.</span>
+          <span className="sm:inline block">The password is not correct.</span>
           </div>
           : <></>}
           <form className="flex flex-col gap-2" onSubmit={() => {event.preventDefault(), submitPassword()}}>
@@ -166,27 +166,27 @@ export default function Settings() {
             : <></>}
             <input autoComplete='new-password' type="password" className="input-text" placeholder='Confirm new password' value={newPasswordConfirm} onChange={(e) => {setNewPasswordConfirm(e.target.value), setPasswordMatch(false); if (e.target.value !== newPassword) {setPasswordMatch(true)} else {setPasswordMatch(false)}}} />
             <div className="flex gap-4 pt-4">
-              <a onClick={() => {setEditPassword(false), resetPasswordVars()}} className="ml-auto cursor-pointer secondary-button">Cancel</a>
-              <button type='submit' className="mr-0 primary-button bg-green-500/20">Submit</button>
+              <a onClick={() => {setEditPassword(false), resetPasswordVars()}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
+              <button type='submit' className="primary-button bg-green-500/20 mr-0">Submit</button>
             </div>
           </form>
         </div>
         :
-        <p className="flex-1 mt-1 text-lg text-white sm:col-span-2 sm:mt-0">*********</p>
+        <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg text-white">*********</p>
       }
       </div>
       <div className="flex mb-8">
-        <p className="flex-1 text-lg font-medium text-gray-200/70">Subscription <a onClick={() => setEditSubscription(!editSubscription)} className='pl-2 font-light cursor-pointer text-white/70'>(manage)</a></p>
+        <p className="text-gray-200/70 flex-1 text-lg font-medium">Subscription <a onClick={() => setEditSubscription(!editSubscription)} className='text-white/70 pl-2 font-light cursor-pointer'>(manage)</a></p>
         {editSubscription ? 
         <div className="flex-1">
           {datePaid > 0 ?
-          <a className='flex flex-col w-full gap-2 px-4 py-2 pb-6 my-2 cursor-pointer rounded-xl bg-black/40'>
+          <a className='rounded-xl bg-black/40 flex flex-col w-full gap-2 px-4 py-2 pb-6 my-2 cursor-pointer'>
             <h3 className='text-xl font-bold'>Free trial!</h3>
             <p>{datePaid.toFixed(0)} days remaining</p>
-            <button className="block w-full px-6 py-3 font-medium text-center text-black bg-white border border-transparent rounded-full fancy" onClick={() => CancelSubscription().then(() => window.location.href = global.homepageDomain+'/pricing')}>Cancel Now</button>
+            <button className="fancy block w-full px-6 py-3 font-medium text-center text-black bg-white border border-transparent rounded-full" onClick={() => CancelSubscription().then(() => window.location.href = global.homepageDomain+'/pricing')}>Cancel Now</button>
           </a>
           :
-          <a onClick={() => {console.log(getCustomerPortalURL().then((URL) => window.location.href = URL))}} className="flex gap-4 px-4 py-2 my-2 rounded-lg cursor-pointer bg-black/40 w-fit">
+          <a onClick={() => {getCustomerPortalURL().then((URL) => window.location.href = URL)}} className="bg-black/40 w-fit flex gap-4 px-4 py-2 my-2 rounded-lg cursor-pointer">
             <div>
               <p className="text-lg text-white">Subscription Cost</p>
               <p className="text-sm text-gray-400">Open in Stripe</p>
@@ -202,16 +202,16 @@ export default function Settings() {
         : 
         <>
         {datePaid > 0 ?
-        <p className="flex flex-col flex-1 mt-1 text-lg text-white sm:col-span-2 sm:mt-0">Free Trial! <span className="italic text-gray-300 text-md">{datePaid.toFixed(0)} days remaining</span></p>
+        <p className="sm:col-span-2 sm:mt-0 flex flex-col flex-1 mt-1 text-lg text-white">Free Trial! <span className="text-md italic text-gray-300">{datePaid.toFixed(0)} days remaining</span></p>
         :
-        <p className="flex-1 mt-1 text-lg sm:col-span-2 sm:mt-0">${totalCost.toFixed(2)}</p>
+        <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg">${totalCost.toFixed(2)}</p>
       }
       </>
 }
       </div>
     </div>
     <div className="flex flex-col items-center my-auto">
-      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='w-3/4 mt-12 warning-button'>Sign Out</a>
+      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='warning-button w-3/4 mt-12'>Sign Out</a>
     </div>
     </Layout>
   )

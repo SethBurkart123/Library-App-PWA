@@ -15,14 +15,12 @@ import ResetPassword from './pages/ResetPassword';
 import PageNotFound from './pages/PageNotFound';
 import CreateBook from './pages/app/create/book';
 import PaymentRedirect from './pages/PaymentRedirect';
-import pwaInstallHandler from 'pwa-install-handler';
 
 function App() {
 
   const location = useLocation();
 
   useEffect(() => {
-    pwaInstallHandler.install()
     document.querySelector('html').style.scrollBehavior = 'auto'
     window.scroll({ top: 0 })
     document.querySelector('html').style.scrollBehavior = ''

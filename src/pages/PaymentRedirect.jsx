@@ -41,18 +41,18 @@ export default function Setup() {
 const checkSubscription = async () => {
   try {
     const record = await client.collection('users').getOne(client.authStore.model.id, {});
-    console.log(record);
+    //console.log(record);
     if (record.createdSubscription == true) {
       window.location.href = "/";
     } else if (record.createdSubscription == false) {
-      console.log("Getting payment url!")
+      //console.log("Getting payment url!")
       getPaymentURL(client).then((URL) => window.location.href = URL.paymentURL);
     } else {
-      console.log("other");
-      console.log(record.createdSubscription)
+      //console.log("other");
+      //console.log(record.createdSubscription)
     }
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     
     // log user out as they dont exist
     //client.authStore.clear();

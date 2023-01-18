@@ -36,7 +36,7 @@ const Layout = (props) => {
     if (scrolling) {
       setScrolling(false);
       // Do something when scrolling ends
-      console.log("Scrolling ended");
+      //console.log("Scrolling ended");
     } else {
       // Call the scrollEnd function again on the next frame
       requestAnimationFrame(scrollEnd);
@@ -48,12 +48,11 @@ const Layout = (props) => {
     <div className="w-screen h-screen overflow-hidden">
       <img src={background} alt="background" className="-z-10 bottom-1/2 absolute object-cover w-screen h-screen translate-y-1/2" />
       <div className="md:w-65vh bg-wood-side-dark flex flex-col justify-between w-screen h-screen mx-auto overflow-hidden" style={{boxShadow: "0px 7px 100px 80px rgba(0,0,0,1)"}}>
-        <div className="sticky top-0 z-50">
-          <div className="backdrop-blur-sm h-4 -mt-4"></div>
+        <div className="sticky top-0 left-0 z-50 h-0">
           {props.topbar}
         </div>
         {props.overlay}
-        <div ref={elementRef} className="pt-18 touch h-screen pb-16 overflow-y-scroll text-white bg-transparent">
+        <div ref={elementRef} className="pt-18 touch h-screen pb-20 overflow-y-scroll text-white bg-transparent">
           <div className="md:w-65vh w-screen mx-auto">
             {props.children}
           </div>

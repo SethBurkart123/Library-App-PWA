@@ -33,32 +33,33 @@
   width: calc(100% / calc(500px / var(--size)));
 }
 
-
-input, textarea {
+input,
+textarea {
   user-select: text;
 }
 
 .input-text {
   @apply w-full px-4 py-2 text-white rounded-lg outline-none bg-black/40 inner-shadow-main backdrop-blur-md placeholder:text-gray-200 placeholder:font-light placeholder:italic;
-  box-shadow: 0px 0px 23px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 0px 23px 0px rgba(0, 0, 0, 0.5);
 }
 
 .warning-button {
   @apply px-4 py-2 text-white rounded-lg outline-none bg-red-500/20 backdrop-blur-sm inner-shadow-main;
-  box-shadow: 0px 0px 4px 0px rgba(255,0,0,1);
+  box-shadow: 0px 0px 4px 0px rgba(255, 0, 0, 1);
 }
 
 .primary-button {
   @apply px-4 py-2 inner-shadow-main rounded-lg backdrop-blur-sm bg-white/20;
-  box-shadow: 0px 0px 4px 0px rgba(255,255,255,1);
+  box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 1);
 }
 
 .secondary-button {
   @apply px-4 py-2 rounded-lg;
-  box-shadow: inset 0px 0px 16px 0px rgba(255,255,255,0.2);
+  box-shadow: inset 0px 0px 16px 0px rgba(255, 255, 255, 0.2);
 }
 
-body, html {
+body,
+html {
   height: 100%;
   position: relative;
   background: #24110a;
@@ -70,7 +71,8 @@ html {
   overflow: hidden;
 }
 .IOS-outline {
-  box-shadow: 0px 0px 0px 4px rgba(239,68,68,1), inset 2px -13px 60px -3px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0px 0px 0px 4px rgba(239, 68, 68, 1),
+    inset 2px -13px 60px -3px rgba(0, 0, 0, 0.4) !important;
 }
 
 .touch {
@@ -85,7 +87,6 @@ html {
   right: 0;
 }
 
-
 .fancy {
   font-family: "Spectral SC", system-ui, sans-serif;
 }
@@ -93,14 +94,6 @@ html {
 .active {
   @apply translate-y-4;
 }
-
-.bg-wood-side {
-  @apply bg-amber-900;
-  background-image: url("/images/wood-side.webp");
-  background-repeat: repeat;
-  background-size: 24em;
-}
-
 
 .bg-wood-side-dark {
   @apply bg-amber-900;
@@ -147,7 +140,6 @@ html {
 .inner-shadow-main {
   box-shadow: inset 2px -13px 60px -3px rgba(0, 0, 0, 0.4);
 }
-
 
 .image-div {
   @apply max-h-32;
@@ -323,7 +315,7 @@ html {
 }
 
 .w-inherit {
-  width: inherit!important;
+  width: inherit !important;
 }
 
 .h-25 {
@@ -335,12 +327,12 @@ html {
 }
 
 .showPrompt {
-  animation: 1s 1 cubic-bezier(1,.12,0,.93) showPrompt;
+  animation: 1s 1 cubic-bezier(1, 0.12, 0, 0.93) showPrompt;
   animation-fill-mode: forwards;
 }
 
 .hidePrompt {
-  animation: 1s 1 cubic-bezier(1,.12,0,.93) hidePrompt;
+  animation: 1s 1 cubic-bezier(1, 0.12, 0, 0.93) hidePrompt;
   animation-fill-mode: forwards;
 }
 

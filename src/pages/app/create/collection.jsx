@@ -84,7 +84,7 @@ export default function CreateCollection() {
       const record = await client.collection('collection').create(data);
       navigate('/')
     } catch(err) {
-      console.log(err);
+      //console.log(err);
     }
   }
 

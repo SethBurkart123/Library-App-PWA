@@ -14,8 +14,8 @@ export default function viewCollection(props) {
     <Layout overlay={
       <>
         { deletePrompt ?
-          <div className="absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition bg-black/40">
-            <div className="px-4 py-2 text-white rounded-lg bg-wood-side-dark outline-white/20 outline-2 outline">
+          <div className="bg-black/40 absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition">
+            <div className="bg-wood-side-dark outline-white/20 outline-2 outline px-4 py-2 text-white rounded-lg">
               <h2 className="text-xl font-semibold">Are you sure?</h2>
               <p className="font-light">This will delete this collection forever!</p>
               <div className="flex justify-end gap-4 mt-2">
@@ -32,13 +32,13 @@ export default function viewCollection(props) {
         </>
         }
         topbar={
-        <div className="sticky top-0 left-0 z-50 flex justify-between px-4 py-2 text-2xl font-medium text-white border-b-2 bg-black/40 border-b-white/20 backdrop-blur-md">
-          <div className="flex gap-2 overflow-hidden cursor-pointer" onClick={() => props.backFunction(false)}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-9 h-9">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
-            <h1 className="my-auto whitespace-nowrap">{props.data.name}</h1>
-          </div>
+        <div className="bg-black/40 border-b-white/20 backdrop-blur-md sticky top-0 left-0 z-50 flex justify-between px-4 py-2 text-2xl font-medium text-white border-b-2">
+          <h1 onClick={() => props.backFunction(false)} className="whitespace-nowrap flex gap-2 my-auto overflow-hidden cursor-pointer">
+            <svg className="w-9 h-9 min-w-fit min-h-fit" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            <span>{props.data.name}</span>
+          </h1>
           <a onClick={() => {editMode ? setEditMode(false) : setEditMode(true) /*, setImg()*/}} className="flex gap-2 cursor-pointer">
             <h2 className="pl-4 my-auto text-2xl font-light text-center pointer-events-none">{editMode ? "Cancel" : "Edit"}</h2>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-6 h-6 my-auto">
@@ -53,18 +53,18 @@ export default function viewCollection(props) {
     <>
     <div className='flex flex-col-reverse'>
       
-    <div className="z-10 text-xl text-white shelf"></div>
-    <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
-      <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+    <div className="shelf z-10 text-xl text-white"></div>
+    <div className="justify-right snap-mandatory snap-x z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll">
+      <div className="min-w-max z-50 text-transparent select-none">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
       { props.data.expand.books ? props.data.expand.books.map((book, idx) => {return(
-        <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
+        <div key={idx.toString()} id={idx.toString()} className="snap-center min-w-max z-50">
           {book.coverImage ?
-          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={book.coverImage ? getImageUrl(book.id, book.coverImage) : noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />
+          <img className="shadow-black h-64 rounded-md shadow-2xl cursor-pointer" src={book.coverImage ? getImageUrl(book.id, book.coverImage) : noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />
           :
-          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />}
+          <img className="shadow-black h-64 rounded-md shadow-2xl cursor-pointer" src={noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />}
         </div>
       )}) : null }
-      <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+      <div className="min-w-max z-50 text-transparent select-none">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
     </div>
     </div>
     
@@ -154,34 +154,34 @@ function EditCollection(props) {
   return(
     <div className="px-4 text-white">
       
-      <h2 className="py-2 pr-4 text-lg font-light text-white ">Collection Name</h2>
+      <h2 className=" py-2 pr-4 text-lg font-light text-white">Collection Name</h2>
       <input maxLength={100} type="text" className="input-text" value={name} onChange={(e) => setName(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description</h2>
-      <textarea maxLength={5000} rows="18" type="text" autoComplete='off' className="input-text" placeholder="" value={description} onInput={(e) => { console.log(e.target.value); setDescription(e.target.value) }} onChange={(e) => { console.log(e.target.value); setDescription(e.target.value) }} />
+      <textarea maxLength={5000} rows="18" type="text" autoComplete='off' className="input-text" placeholder="" value={description} onInput={(e) => setDescription(e.target.value)} onChange={(e) => setDescription(e.target.value)} />
       
       <h2 className="py-2 pr-4 text-lg font-light text-white">Add Books</h2>
-      <input type="text" value={search} onChange={handleChange} className="flex items-baseline justify-center input-text" placeholder='Search' />
+      <input type="text" value={search} onChange={handleChange} className="input-text flex items-baseline justify-center" placeholder='Search' />
       {books ? books.map((book, idx) => (
-        <div className="flex gap-1 px-2 py-2 my-2 rounded-lg bg-black/40" key={idx.toString()} id={idx.toString()}>
+        <div className="bg-black/40 flex gap-1 px-2 py-2 my-2 rounded-lg" key={idx.toString()} id={idx.toString()}>
           <div className="min-w-48" style={{
             minHeight: "6rem",
             minWidth: "5rem"
             }}>
               {book.coverImage ? 
-              <img className="rounded-md max-h-32" src={getImageUrl(book.id, book.coverImage)} />
+              <img className="max-h-32 rounded-md" src={getImageUrl(book.id, book.coverImage)} />
               :
-              <img className="rounded-md max-h-32" src={noImage} />
+              <img className="max-h-32 rounded-md" src={noImage} />
             }
           </div>
           <div className="flex flex-col w-full">
-            <p className="text-xl text-white ">{book.name ? 
-            <>{book.name.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{book.name.substring(18, 24)}</span></>
+            <p className=" text-xl text-white">{book.name ? 
+            <>{book.name.substring(0, 18)}<span className="bg-gradient-to-r from-white to-white/0 bg-clip-text text-transparent">{book.name.substring(18, 24)}</span></>
             : "Untitled"}</p>
-            <p className="text-lg text-white/80">{book.author ? 
-            <>{book.author.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white/80 to-white/0 bg-clip-text">{book.author.substring(18, 24)}</span></>
+            <p className="text-white/80 text-lg">{book.author ? 
+            <>{book.author.substring(0, 18)}<span className="bg-gradient-to-r from-white/80 to-white/0 bg-clip-text text-transparent">{book.author.substring(18, 24)}</span></>
             : "No Author"}</p>
-            <div className="flex w-full mt-auto mb-0 space-between">
-              <button onClick={() => appendBook(book.name, book.id)} className="ml-auto mr-0 secondary-button bg-gray-500/20">Add</button>
+            <div className="space-between flex w-full mt-auto mb-0">
+              <button onClick={() => appendBook(book.name, book.id)} className="secondary-button bg-gray-500/20 ml-auto mr-0">Add</button>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ function EditCollection(props) {
 
       <h2 className="pt-2 pr-4 mt-2 text-lg font-light text-white">Preview Books</h2>
       {items[0] ? null :
-      <p className="w-full px-4 py-2 my-4 text-lg text-center text-white rounded-lg bg-black/40">There are no books in this collection</p>
+      <p className="bg-black/40 w-full px-4 py-2 my-4 text-lg text-center text-white rounded-lg">There are no books in this collection</p>
       }
       <List
         values={items}
@@ -217,7 +217,7 @@ function EditCollection(props) {
               cursor: isDragged ? 'grabbing' : 'grab',
               boxShadow: '0px 0px 0px 0.95px rgba(127,127,127,1)'
             }}
-            className="w-full px-4 py-4 my-2 text-white rounded-lg backdrop-blur-sm bg-black/60 inner-shadow-main"
+            className="backdrop-blur-sm bg-black/60 inner-shadow-main w-full px-4 py-4 my-2 text-white rounded-lg"
           >
             <div
               style={{
@@ -229,7 +229,7 @@ function EditCollection(props) {
               <div className="flex gap-4"><HamburgerIcon />
               {value.name ?
               <p className="text-lg">
-                {value.name.substring(0, 17)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{value.name.substring(17, 22)}
+                {value.name.substring(0, 17)}<span className="bg-gradient-to-r from-white to-white/0 bg-clip-text text-transparent">{value.name.substring(17, 22)}
                 </span>
               </p>
               : "No Name"}
@@ -252,9 +252,9 @@ function EditCollection(props) {
       />
 
       <div className="flex gap-4 pt-4">
-        <a className="warning-button" onClick={() => {props.setDeletePrompt(true), console.log("test")}}>Delete</a>
-        <a onClick={() => props.setEditMode(false)} className="ml-auto secondary-button">Cancel</a>
-        <button onClick={() => {submit()}} className="mr-0 primary-button">Submit</button>
+        <a className="warning-button" onClick={() => props.setDeletePrompt(true)}>Delete</a>
+        <a onClick={() => props.setEditMode(false)} className="secondary-button ml-auto">Cancel</a>
+        <button onClick={() => {submit()}} className="primary-button mr-0">Submit</button>
       </div>
     </div>
   )
