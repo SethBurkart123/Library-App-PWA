@@ -325,9 +325,11 @@ export default function ViewBook(props) {
     topbar={
     <div className="bg-black/40 border-b-white/20 backdrop-blur-md sticky top-0 left-0 z-50 flex justify-between px-4 py-2 text-2xl font-medium text-white border-b-2">
       <h1 onClick={() => props.backFunction(false)} className="whitespace-nowrap flex gap-2 my-auto overflow-hidden cursor-pointer">
-        <svg className="w-9 h-9 min-w-fit min-h-fit" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
+        <div className="w-9 h-9">
+          <svg className="w-9 h-9" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </div>
         <span>{props.data.name}</span>
       </h1>
       <a onClick={() => {editMode ? setEditMode(false) : setEditMode(true) /*, setImg()*/}} className="flex gap-2 cursor-pointer">
