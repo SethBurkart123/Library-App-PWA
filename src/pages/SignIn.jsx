@@ -4,6 +4,7 @@ import background from '../images/background.webp';
 import InstallPrompt from '../components/installPrompt'
 
 import PocketBase from 'pocketbase';
+import Rive from '@rive-app/react-canvas';
 
 function SignIn() {
   const client = new PocketBase(global.pocketbaseDomain);
@@ -42,6 +43,7 @@ function SignIn() {
         window.location.href = '/'; //redirect to search page
     } catch(err) {
       setLoginError(true);
+      setSubmitted(false);
       //console.log(err);
     }
   }
@@ -93,7 +95,13 @@ function SignIn() {
             {/* Submit Button */}
             <div className="flex flex-wrap mt-6 -mx-3">
               <div className="w-full px-3">
-                <button type="submit" className="btn fancy rounded-full hover:bg-[#374635] w-full text-white bg-[#465943] shadow-black/20 shadow-xl">Sign in</button>
+                {submitted ?
+                  <button disabled className="btn fancy rounded-full w-full text-black bg-[#465943] shadow-black/20 shadow-xl">
+                    <Rive className='rive-loader relative top-0' src="/animations/loader.riv" />
+                  </button>
+                  :
+                  <button type="submit" className="btn fancy rounded-full hover:bg-[#374635] w-full text-white bg-[#465943] shadow-black/20 shadow-xl">Login</button>
+                }
               </div>
             </div>
           </form>

@@ -34,13 +34,23 @@ export default function Settings() {
       }
       const record = await client.collection('users').getOne(client.authStore.model.id, {});
       if (!record.createdSubscription) {
-        window.location.href = '/setup';
+        if (!record.hasSub) {
+          window.location.href = global.homepageDomain+'/pricing';
+        } else {
+          window.location.href = '/payment-redirect?paymentPlan='+record.subscriptionPlan;
+        }
       }
       setName(record.username);
       setEmail(record.email);
       setDatePaid(30 - ((Date.now() / 1000) - record.datePaid) / (60 * 60 * 24));
       setTotalCost(record.monthlySubCost/100000);
-    } catch {}
+    } catch(error) {
+      // logout user
+      if (error.toString().toLowerCase().includes('404')) {
+        client.authStore.clear();
+        window.location.href = '/signin';
+      }
+    }
   }
 
   async function getCustomerPortalURL() {
@@ -159,7 +169,7 @@ export default function Settings() {
           <span className="sm:inline block">The password is not correct.</span>
           </div>
           : <></>}
-          <form className="flex flex-col gap-2" ononClick={() => {event.preventDefault(), submitPassword()}}>
+          <form className="flex flex-col gap-2" onSubmit={() => {event.preventDefault(), submitPassword()}}>
             <input autoComplete='email' type="email" className="hidden" placeholder='Email' />
             <input autoComplete='current-password' type="password" className="input-text" placeholder='Old password' value={password} onChange={(e) => {setPassword(e.target.value), setWrongPassword(false)}} />
             <input autoComplete='new-password' type="password" className="input-text" placeholder='New password' value={newPassword} onChange={(e) => {setNewPassword(e.target.value); if (newPasswordConfirm !== e.target.value) {setPasswordMatch(true)} else {setPasswordMatch(false)}}} />

@@ -23,21 +23,36 @@ export default function createBook() {
   }
 
   const checkSubscription = async () => {
-    const record = await client.collection('users').getOne(client.authStore.model.id, {});
-    if (!record.hasSub) {
-      window.location.href = global.homepageDomain+'/pricing';
-    }
-    //set max number of images to upload (+2 for spine, cover)
-    switch (record.subscriptionPlan) {
-      case 3:
-        setMaxBooks(13);
-        break;
-      case 2:
-        setMaxBooks(10);
-        break;
-      default:
-        setMaxBooks(6);
-        break;
+    try {
+      if (!client.authStore.isValid) {
+        window.location.href = '/signin';
+      }
+      const record = await client.collection('users').getOne(client.authStore.model.id, {});
+      if (!record.createdSubscription) {
+        if (!record.hasSub) {
+          window.location.href = global.homepageDomain+'/pricing';
+        } else {
+          window.location.href = '/payment-redirect?paymentPlan='+record.subscriptionPlan;
+        }
+      }
+      //set max number of images to upload (+2 for spine, cover)
+      switch (record.subscriptionPlan) {
+        case 3:
+          setMaxBooks(13);
+          break;
+        case 2:
+          setMaxBooks(10);
+          break;
+        default:
+          setMaxBooks(6);
+          break;
+      }
+    } catch(error) {
+      // logout user
+      if (error.toString().toLowerCase().includes('404')) {
+        client.authStore.clear();
+        window.location.href = '/signin';
+      }
     }
   }
   useEffect(() => {checkSubscription()}, [])
@@ -78,8 +93,6 @@ export default function createBook() {
         // free memory when ever this component is unmounted
         return () => URL.revokeObjectURL(objectUrl)
       }
-
-      
   }, [spineImage])
 
   //create a preview as a side effect, whenever selected file is changed

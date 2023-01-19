@@ -351,9 +351,9 @@ export default function ViewBook(props) {
   <>
     { deletePrompt ?
       <div className="bg-black/40 absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition">
-        <div className="bg-wood-side-dark outline-white/20 outline-2 outline px-4 py-2 text-white rounded-lg">
+        <div className="bg-wood-side-dark darker px-4 py-2 text-white rounded-lg" style={{boxShadow: "0px 0px 1px 4px rgba(255, 0, 0, 0.4)"}}>
           <h2 className="text-xl font-semibold">Are you sure?</h2>
-          <p className="font-light">This will delete this collection forever!</p>
+          <p className="font-light">This will delete this book forever!</p>
           <div className="flex justify-end gap-4 mt-2">
             <button onClick={() => setDeletePrompt(false)} className="secondary-button">Cancel</button>
             <DeleteLoaderButton submitted={submittedDelete} onClick={ async () => {

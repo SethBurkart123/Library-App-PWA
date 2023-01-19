@@ -16,22 +16,22 @@ export default function viewCollection(props) {
     <Layout overlay={
       <>
         { deletePrompt ?
-          <div className="bg-black/40 absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition">
-            <div className="bg-wood-side-dark outline-white/20 outline-2 outline px-4 py-2 text-white rounded-lg">
-              <h2 className="text-xl font-semibold">Are you sure?</h2>
-              <p className="font-light">This will delete this collection forever!</p>
-              <div className="flex justify-end gap-4 mt-2">
-                <button onClick={() => setDeletePrompt(false)} className="secondary-button">Cancel</button>
-                <DeleteLoaderButton submitted={submitted} onClick={ async () => {
-                  setSubmitted(true);
-                  try { await client.collection('collection').delete(props.data.id) } catch (error) { setSubmitted(false) }
-                  window.location.href = "/";
-                  window.location.reload(true);
-                }}>Delete</DeleteLoaderButton>
-              </div>
+        <div className="bg-black/40 absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition">
+          <div className="bg-wood-side-dark darker px-4 py-2 text-white rounded-lg" style={{boxShadow: "0px 0px 1px 4px rgba(255, 0, 0, 0.4)"}}>
+            <h2 className="text-xl font-semibold">Are you sure?</h2>
+            <p className="font-light">This will delete this collection forever!</p>
+            <div className="flex justify-end gap-4 mt-2">
+              <button onClick={() => setDeletePrompt(false)} className="secondary-button">Cancel</button>
+              <DeleteLoaderButton submitted={submittedDelete} onClick={ async () => {
+                setSubmittedDelete(true);
+                try { await client.collection('collection').delete(props.data.id) } catch (error) { setSubmittedDelete(false) }
+                window.location.href = "/";
+                window.location.reload(true);
+              }}>Delete</DeleteLoaderButton>
             </div>
           </div>
-          : <></>}
+        </div>
+        : <></>}
         </>
         }
         topbar={

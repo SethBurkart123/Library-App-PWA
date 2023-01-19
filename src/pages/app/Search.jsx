@@ -22,10 +22,6 @@ const searchParams = new URLSearchParams(window.location.search);
 
 export default React.memo(function Search() {
   const success = searchParams.get('success');
-  // redirect logged out users to signin page
-  if (!client.authStore.isValid) {
-    window.location.href = '/signin';
-  }
 
   useEffect(() => {
     // scroll to top
@@ -77,6 +73,9 @@ export default React.memo(function Search() {
   
   const checkSubscription = async () => {
     try {
+      if (!client.authStore.isValid) {
+        window.location.href = '/signin';
+      }
       const record = await client.collection('users').getOne(client.authStore.model.id, {});
       if (!record.createdSubscription) {
         if (!record.hasSub) {
@@ -86,7 +85,11 @@ export default React.memo(function Search() {
         }
       }
     } catch(error) {
-      //console.error(error)
+      // logout user
+      if (error.toString().toLowerCase().includes('404')) {
+        client.authStore.clear();
+        window.location.href = '/signin';
+      }
     }
   }
 
