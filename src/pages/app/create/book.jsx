@@ -23,8 +23,20 @@ export default function createBook() {
 
   const checkSubscription = async () => {
     const record = await client.collection('users').getOne(client.authStore.model.id, {});
-    if (!record.createdSubscription) {
-      window.location.href = '/';
+    if (!record.hasSub) {
+      window.location.href = global.homepageDomain+'/pricing';
+    }
+    //set max number of images to upload (+2 for spine, cover)
+    switch (record.subscriptionPlan) {
+      case 3:
+        setMaxBooks(13);
+        break;
+      case 2:
+        setMaxBooks(10);
+        break;
+      default:
+        setMaxBooks(6);
+        break;
     }
   }
   useEffect(() => {checkSubscription()}, [])
@@ -51,6 +63,7 @@ export default function createBook() {
   const [borrower, setBorrower] = useState('');
   const [borrowers, setBorrowers] = useState([]);
   const [borrowerSelection, setBorrowerSelection] = useState(-2);
+  const [maxBooks, setMaxBooks] = useState(6);
 
   //create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
@@ -82,24 +95,23 @@ export default function createBook() {
 
   //create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
-      // if there is no file selected, then return
-      if (otherImages.length+1 != OtherPreview.lenth) {
-        let temp = [];
-        for (let i = 0; i < otherImages.length; i++) {
-          const objectUrl = URL.createObjectURL(otherImages[i])
-          temp.push(objectUrl);
-        }
-        setOtherPreview(temp);
-
-      } else if(otherImages[otherImages.length-1] != null){
-        // create the preview of last image
-        const objectUrl = URL.createObjectURL(otherImages[otherImages.length-1]);
-        setOtherPreview([...OtherPreview, objectUrl]);
-
-        // free memory when ever this component is unmounted
-        return () => URL.revokeObjectURL(objectUrl)
+    // if there is no file selected, then return
+    if (otherImages.length != OtherPreview.length) {
+      let temp = [];
+      for (let i = 0; i < otherImages.length; i++) {
+        const objectUrl = URL.createObjectURL(otherImages[i])
+        temp.push(objectUrl);
       }
-  }, [otherImages])
+      setOtherPreview(temp);
+    } else if(otherImages[otherImages.length-1] != null){
+      // create the preview of last image
+      const objectUrl = URL.createObjectURL(otherImages[otherImages.length-1]);
+      setOtherPreview([...OtherPreview, objectUrl]);
+
+      // free memory when ever this component is unmounted
+      return () => URL.revokeObjectURL(objectUrl)
+    }
+}, [otherImages])
 
 
   async function submit() {
@@ -127,9 +139,8 @@ export default function createBook() {
     try {
       const record = await client.collection('book').create(data);
       const imagesRecord = await client.collection('book').update(record.id, images);
-      //console.log(record)
       // redirect to search page
-      navigate('/');
+      window.location.href = '/';
     } catch (err) {}
   }
 
@@ -161,15 +172,35 @@ export default function createBook() {
       }});
   };
 
-  function handleCompressedOther(image) {
-      new Compressor(image, {
-      quality: 0.6, // 0.6 can also be used, but its not recommended to go below.
-      success: (compressedResult) => {
-        // compressedResult has the compressed file.
-        // Use the compressed file to upload the images to your server.
-        setOtherImages([...otherImages, compressedResult]);
-      }});
-  };
+  function handleCompressedOther(images) {
+    let compressionPromises = [];
+    for (let i = 0; i < images.length; i++) {
+      let image = images[i];
+      // Use the new Compressor function to compress the image
+      // Return a new promise that resolves when the compression is complete
+      let compressionPromise = new Promise((resolve, reject) => {
+        new Compressor(image, {
+          quality: 0.6,
+          success: (compressedBlob) => {
+            // When the compression is complete, resolve the promise
+            // with the compressed image
+            resolve(compressedBlob);
+          }
+        });
+      });
+      compressionPromises.push(compressionPromise);
+    }
+    Promise.all(compressionPromises).then((compressedBlobs) => {
+      let tempBooksAllowed = maxBooks - otherImages.length;
+      compressedBlobs = compressedBlobs.slice(0, tempBooksAllowed);
+      let extra = 0;
+      if (compressedBlobs.length == 0) {extra = 1;}
+      if (otherImages.length+compressedBlobs.length+extra <= maxBooks) {
+        setOtherImages(otherImages.concat(compressedBlobs));
+      }
+    });
+  }
+
 
   const getBorrowers = async (searchRequest) => {
     try {
@@ -192,35 +223,35 @@ export default function createBook() {
       {
         CreateBook ?
         <>
-          <button className="border-b-white inner-shadow-main bg-black/20 backdrop-blur-md flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2">Book</button>
-          <button onClick={() => {setCreateBook(false)}} className="text-white/20 backdrop-blur-md bg-black/50 border-b-white/20 inner-shadow-main flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2">Collection</button>
+          <button className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2 border-b-white inner-shadow-main bg-black/20 backdrop-blur-md">Book</button>
+          <button onClick={() => {setCreateBook(false)}} className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2 text-white/20 backdrop-blur-md bg-black/50 border-b-white/20 inner-shadow-main">Collection</button>
         </>
         :
         <>
-          <button onClick={() => {setCreateBook(true)}} className="text-white/20 bg-black/50 backdrop-blur-md border-b-white/20 inner-shadow-main flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2">Book</button>
-          <button className="border-b-white inner-shadow-main bg-black/20 backdrop-blur-md flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2">Collection</button>
+          <button onClick={() => {setCreateBook(true)}} className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2 text-white/20 bg-black/50 backdrop-blur-md border-b-white/20 inner-shadow-main">Book</button>
+          <button className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2 border-b-white inner-shadow-main bg-black/20 backdrop-blur-md">Collection</button>
         </>
       }
-      </div>
+    </div>
       
     }>
-    <div className="-mt-4">
+    <div>
       { CreateBook ?
       <div className="px-4">        
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Title</h2>
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Title</h2>
         <input maxLength={100} type="text" className="input-text" value={bookName} onChange={(e) => setBookName(e.target.value)} />
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Author <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Author <span className="italic text-gray-300">(optional)</span></h2>
         <input maxLength={100} className="input-text" type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)} />
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Publisher <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Publisher <span className="italic text-gray-300">(optional)</span></h2>
         <input maxLength={100} className="input-text" type="text" value={bookPublisher} onChange={(e) => setBookPublisher(e.target.value)} />
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Date Published <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Date Published <span className="italic text-gray-300">(optional)</span></h2>
         <input className="input-text" type="date" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} />
         <h2 className="py-2 pr-4 text-lg font-light text-white">Description <span className="italic text-gray-300">(optional)</span></h2>
         <textarea maxLength={5000} rows="18" type="text" className="input-text" onChange={(e) => setDescription(e.target.value)}/>
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
-        <div className="bg-black/40 backdrop-blur-sm px-2 py-2 rounded-lg shadow-inner">
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
+        <div className="px-2 py-2 rounded-lg shadow-inner bg-black/40 backdrop-blur-sm">
           <div className="relative">
-            <input maxLength={128} className="input-text w-full px-4 py-2 rounded-lg outline-none" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />
+            <input maxLength={128} className="w-full px-4 py-2 rounded-lg outline-none input-text" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />
             <svg onClick={() => {setBorrower(""), getBorrowers(""), setBorrowerSelection(-2)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8.5 h-8.5 absolute top-1 right-1">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -232,7 +263,7 @@ export default function createBook() {
             <div id={idx.toString()} key={idx.toString()}>
             {borrowerSelection == idx ?
               borrowerItem == borrower ? null :
-              <div className="backdrop-blur-sm bg-white/5 text-md backdrop-brightness-110 border-white/80 flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer" onClick={() => {setBorrower(''), setBorrowerSelection(-2)}}>
+              <div className="flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer backdrop-blur-sm bg-white/5 text-md backdrop-brightness-110 border-white/80" onClick={() => {setBorrower(''), setBorrowerSelection(-2)}}>
                 <PlusCircleIcon className="h-6 pointer-events-none" />
                 <p className="my-auto pointer-events-none select-none">{borrowerItem}</p>
               </div> 
@@ -241,7 +272,7 @@ export default function createBook() {
               :
               borrowerItem == borrower ?
               null :
-              <div id={idx.toString()} key={idx.toString()} className="backdrop-blur-sm bg-white/5 border-white/20 text-md flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer" onClick={() => {setBorrower(borrowerItem), setBorrowerSelection(idx)}}>
+              <div id={idx.toString()} key={idx.toString()} className="flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer backdrop-blur-sm bg-white/5 border-white/20 text-md" onClick={() => {setBorrower(borrowerItem), setBorrowerSelection(idx)}}>
                 <PlusCircleIcon className="h-6 pointer-events-none" />
                 <p className="my-auto pointer-events-none select-none">{borrowerItem}</p>
               </div>
@@ -252,46 +283,46 @@ export default function createBook() {
           : null}
         </div>
         
-        <h2 className=" py-2 pr-4 text-lg font-light text-white">Main Images</h2>
-        <div className="input-text flex gap-2 px-2 py-2 text-white outline-none">
+        <h2 className="py-2 pr-4 text-lg font-light text-white ">Main Images</h2>
+        <div className="flex gap-2 px-2 py-2 text-white outline-none input-text">
 
             
-            <div className="max-h-fit flex-1">
+            <div className="flex-1 max-h-fit">
                 {spineImage ?
-                    <button className="inner-shadow-main border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white bg-transparent border-2 rounded-lg shadow-inner" onClick={() => SpineImage.current.click()}>Set Spine Image</button>
+                    <button className="w-full px-4 py-2 mb-4 text-white bg-transparent border-2 rounded-lg shadow-inner inner-shadow-main border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => SpineImage.current.click()}>Set Spine Image</button>
                     :
-                    <button className="inner-shadow-main border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white bg-transparent border-2 rounded-lg shadow-inner" onClick={() => SpineImage.current.click()}>Set Spine Image</button>
+                    <button className="w-full px-4 py-2 mb-4 text-white bg-transparent border-2 rounded-lg shadow-inner inner-shadow-main border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => SpineImage.current.click()}>Set Spine Image</button>
                 }
                 
                 <input type="file" id="spineImage" className="hidden" ref={SpineImage} accept="image/*" onChange={(event) => {handleCompressedSpine(event.target.files[0]);}} />
                 {spineImage ?
-                    <img alt="Spine Image" className="max-h-60 max-w-full mx-auto my-auto rounded-md" onClick={() => SpineImage.current.click()} src={SpinePreview} />
+                    <img alt="Spine Image" className="max-w-full mx-auto my-auto rounded-md max-h-60" onClick={() => SpineImage.current.click()} src={SpinePreview} />
                     :
-                    <img alt="No Spine Image" className="opacity-20 max-h-60 max-w-full mx-auto my-auto rounded-md" onClick={() => SpineImage.current.click()} src={SpinePreviewImage} />
+                    <img alt="No Spine Image" className="max-w-full mx-auto my-auto rounded-md opacity-20 max-h-60" onClick={() => SpineImage.current.click()} src={SpinePreviewImage} />
                 }
             </div>
-            <div className="max-h-fit flex-1">
+            <div className="flex-1 max-h-fit">
                 {CoverImage ?
-                    <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => CoverImage.current.click()}>Set Cover Image</button>
+                    <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => CoverImage.current.click()}>Set Cover Image</button>
                     :
-                    <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => CoverImage.current.click()}>Set Cover Image</button>
+                    <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => CoverImage.current.click()}>Set Cover Image</button>
                 }
                 <input type="file" id="coverImage" className="hidden" ref={CoverImage} accept="image/*" onChange={(event) => {handleCompressedCover(event.target.files[0])}} />
                 {coverImage ?
-                    <img alt="Cover Image" onClick={() => CoverImage.current.click()} src={CoverPreview} className="max-h-60 max-w-full mx-auto my-auto rounded-md" />
+                    <img alt="Cover Image" onClick={() => CoverImage.current.click()} src={CoverPreview} className="max-w-full mx-auto my-auto rounded-md max-h-60" />
                     :
-                    <img alt="No Cover Image" onClick={() => CoverImage.current.click()} className="opacity-20 max-h-60 max-w-full mx-auto my-auto rounded-md" src={CoverPreviewImage} />
+                    <img alt="No Cover Image" onClick={() => CoverImage.current.click()} className="max-w-full mx-auto my-auto rounded-md opacity-20 max-h-60" src={CoverPreviewImage} />
                 }
             </div>
         </div>
         <h2 className="py-2 pr-4 text-lg font-light text-white">Other Images <span className="italic text-gray-300">(optional)</span></h2>
-        <div className="input-text flex flex-wrap gap-4 px-4 py-2 text-white outline-none">
-            <img alt="Add another image" className="image h-32 pointer-events-auto" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
-            <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files[0])}} />
+        <div className="flex flex-wrap gap-4 px-4 py-2 text-white outline-none input-text">
+            <img alt="Add another image" className="h-32 pointer-events-auto image" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
+            <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files)}} multiple/>
             {OtherPreview && OtherPreview.map(
             (item, idx) => (
             <div className="image-div" key={idx.toString()} id={idx.toString()}>
-                <img className="max-h-32 image outline outline-white rounded-lg opacity-50" src={item} />
+                <img className="rounded-lg opacity-50 max-h-32 image outline outline-white" src={item} />
                 <div onClick={() => remove(idx)} className="hidden_img">
                 <svg className="mx-auto my-auto text-xl font-bold text-white" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="-6 6 24 24" strokeWidth="1" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     <path stroke="currentColor" d="M10 10l4 4m0 -4l-4 4" />
@@ -303,8 +334,8 @@ export default function createBook() {
 
         </div>
         <div className="flex gap-4 pt-4">
-            <a href="/" className="secondary-button ml-auto">Cancel</a>
-            <button onClick={() => {submit()} } className="primary-button bg-green-500/20 mr-0">Submit</button>
+            <a href="/" className="ml-auto secondary-button">Cancel</a>
+            <button onClick={() => {submit()} } className="mr-0 primary-button bg-green-500/20">Submit</button>
         </div>
       </div>
       :

@@ -3,7 +3,6 @@ import PocketBase from 'pocketbase';
 import React, { useState, useEffect, useRef } from 'react';
 import Compressor from 'compressorjs';
 import Footer from '../../../components/footer';
-import { useNavigate } from 'react-router-dom';
 import SpinePreviewImage from "../../../images/spine.jpg";
 import CoverPreviewImage from "../../../images/spine.jpg";
 import noImage from '../../../images/noImage.jpeg';
@@ -13,7 +12,6 @@ import Layout from '../../../components/layout';
 
 
 export default function ViewBook(props) {
-  const navigate = useNavigate();
   const client = new PocketBase(global.pocketbaseDomain);
   /*
   2 individual file uploads that are required for the book images. 
@@ -65,9 +63,11 @@ export default function ViewBook(props) {
   const collectionRef = useRef(null);
   const collectionObserver = useRef(null);
 
+  const [maxBooks, setMaxBooks] = useState(6);
+
   //if not signed in ask user to sign in
   if (!client.authStore.isValid) {
-    navigate('/signin');
+    window.location.href = '/signin';
   }
 
   //create a preview as a side effect, whenever selected file is changed
@@ -98,14 +98,22 @@ export default function ViewBook(props) {
 
   //create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
-      // check if preview of otherimages needs updating
-      if (otherImages.length+1 != OtherPreview.lenth) {
-        let temp = [];
-        for (let i = 0; i < otherImages.length; i++) {
-          temp.push(URL.createObjectURL(otherImages[i]));
-        }
-        setOtherPreview(temp);
+    // if there is no file selected, then return
+    if (otherImages.length != OtherPreview.length) {
+      let temp = [];
+      for (let i = 0; i < otherImages.length; i++) {
+        const objectUrl = URL.createObjectURL(otherImages[i])
+        temp.push(objectUrl);
       }
+      setOtherPreview(temp);
+    } else if(otherImages[otherImages.length-1] != null){
+      // create the preview of last image
+      const objectUrl = URL.createObjectURL(otherImages[otherImages.length-1]);
+      setOtherPreview([...OtherPreview, objectUrl]);
+
+      // free memory when ever this component is unmounted
+      return () => URL.revokeObjectURL(objectUrl)
+    }
   }, [otherImages])
 
 
@@ -120,6 +128,26 @@ export default function ViewBook(props) {
   useEffect(() => {
     getBookCollections(bookCollectionPage, props.data.id);
   }, [bookCollectionPage])
+
+  const checkSubscription = async () => {
+    const record = await client.collection('users').getOne(client.authStore.model.id, {});
+    if (!record.hasSub) {
+      window.location.href = global.homepageDomain+'/pricing';
+    }
+    //set max number of images to upload (+2 for spine, cover)
+    switch (record.subscriptionPlan) {
+      case 3:
+        setMaxBooks(13);
+        break;
+      case 2:
+        setMaxBooks(10);
+        break;
+      default:
+        setMaxBooks(6);
+        break;
+    }
+  }
+  useEffect(() => {checkSubscription()}, [])
 
   async function SetCoverImageUrl(url) {
     let blob = await fetch(url)
@@ -224,15 +252,34 @@ export default function ViewBook(props) {
   };
 
 
-  const handleCompressedOther = (image) => {
-    new Compressor(image, {
-      quality: 0.6,
-      success: (compressedResult) => {
-        setOtherImages([...otherImages, compressedResult]);
-        setIsOtherImagesPicked(true);
-      },
+  function handleCompressedOther(images) {
+    let compressionPromises = [];
+    for (let i = 0; i < images.length; i++) {
+      let image = images[i];
+      // Use the new Compressor function to compress the image
+      // Return a new promise that resolves when the compression is complete
+      let compressionPromise = new Promise((resolve, reject) => {
+        new Compressor(image, {
+          quality: 0.6,
+          success: (compressedBlob) => {
+            // When the compression is complete, resolve the promise
+            // with the compressed image
+            resolve(compressedBlob);
+          }
+        });
+      });
+      compressionPromises.push(compressionPromise);
+    }
+    Promise.all(compressionPromises).then((compressedBlobs) => {
+      let tempBooksAllowed = maxBooks - otherImages.length;
+      compressedBlobs = compressedBlobs.slice(0, tempBooksAllowed);
+      let extra = 0;
+      if (compressedBlobs.length == 0) {extra = 1;}
+      if (otherImages.length+compressedBlobs.length+extra <= maxBooks) {
+        setOtherImages(otherImages.concat(compressedBlobs));
+      }
     });
-  };  
+  }
 
   const getBorrowers = async (searchRequest) => {
     try {
@@ -304,8 +351,8 @@ export default function ViewBook(props) {
   <Layout overlay={
   <>
     { deletePrompt ?
-      <div className="bg-black/40 absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition">
-        <div className="bg-wood-side-dark outline-white/20 outline-2 outline px-4 py-2 text-white rounded-lg">
+      <div className="absolute bottom-0 left-0 z-50 grid items-center justify-center w-screen h-screen transition bg-black/40">
+        <div className="px-4 py-2 text-white rounded-lg bg-wood-side-dark outline-white/20 outline-2 outline">
           <h2 className="text-xl font-semibold">Are you sure?</h2>
           <p className="font-light">This will delete this collection forever!</p>
           <div className="flex justify-end gap-4 mt-2">
@@ -323,8 +370,8 @@ export default function ViewBook(props) {
     </>
     }
     topbar={
-    <div className="bg-black/40 border-b-white/20 backdrop-blur-md sticky top-0 left-0 z-50 flex justify-between px-4 py-2 text-2xl font-medium text-white border-b-2">
-      <h1 onClick={() => props.backFunction(false)} className="whitespace-nowrap flex gap-2 my-auto overflow-hidden cursor-pointer">
+    <div className="sticky top-0 left-0 z-50 flex justify-between px-4 py-2 text-2xl font-medium text-white border-b-2 bg-black/40 border-b-white/20 backdrop-blur-md">
+      <h1 onClick={() => props.backFunction(false)} className="flex gap-2 my-auto overflow-hidden cursor-pointer whitespace-nowrap">
         <div className="w-9 h-9">
           <svg className="w-9 h-9" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -343,18 +390,18 @@ export default function ViewBook(props) {
     
     { editMode ?
     <div className="px-4">
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Title</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Title</h2>
       <input maxLength={100} type="text" className="input-text" value={bookName} onChange={(e) => setBookName(e.target.value)} />
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Author</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Author</h2>
       <input maxLength={100} className="input-text" type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)} />
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Publisher</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Publisher</h2>
       <input maxLength={100} className="input-text" type="text" value={bookPublisher} onChange={(e) => setBookPublisher(e.target.value)} />
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Date Published</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Date Published</h2>
       <input className="input-text" type="date" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description</h2>
       <textarea maxLength={5000} rows="18" type="text" className="input-text" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Book Borrower <span sclassName="italic text-gray-300">(optional)</span></h2>
-      <div className="bg-black/40 backdrop-blur-sm px-2 py-2 rounded-lg shadow-inner">
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span sclassName="italic text-gray-300">(optional)</span></h2>
+      <div className="px-2 py-2 rounded-lg shadow-inner bg-black/40 backdrop-blur-sm">
         <div className="relative">
           <input maxLength={128} className="input-text" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />
           <svg onClick={() => {setBorrower(""), getBorrowers(""), setBorrowerSelection(-2)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8.5 h-8.5 absolute top-1 right-1">
@@ -367,7 +414,7 @@ export default function ViewBook(props) {
           <div id={idx.toString()} key={idx.toString()}>
           {borrowerSelection == idx ?
             borrowerItem == borrower ? null :
-            <div className="backdrop-blur-sm bg-white/5 text-md backdrop-brightness-110 border-white/80 flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer" onClick={() => {setBorrower(''), setBorrowerSelection(-2)}}>
+            <div className="flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer backdrop-blur-sm bg-white/5 text-md backdrop-brightness-110 border-white/80" onClick={() => {setBorrower(''), setBorrowerSelection(-2)}}>
               <PlusCircleIcon className="h-6 pointer-events-none" />
               <p className="my-auto pointer-events-none select-none">{borrowerItem}</p>
             </div> 
@@ -375,7 +422,7 @@ export default function ViewBook(props) {
             :
             borrowerItem == borrower ?
             null :
-            <div id={idx.toString()} key={idx.toString()} className="backdrop-blur-sm bg-white/5 border-white/20 text-md flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer" onClick={() => {setBorrower(borrowerItem), setBorrowerSelection(idx)}}>
+            <div id={idx.toString()} key={idx.toString()} className="flex w-full gap-1 px-1 py-1 mt-2 text-white border rounded-lg shadow-xl cursor-pointer backdrop-blur-sm bg-white/5 border-white/20 text-md" onClick={() => {setBorrower(borrowerItem), setBorrowerSelection(idx)}}>
               <PlusCircleIcon className="h-6 pointer-events-none" />
               <p className="my-auto pointer-events-none select-none">{borrowerItem}</p>
             </div>
@@ -385,46 +432,46 @@ export default function ViewBook(props) {
         : null}
       </div>
       
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Main Images</h2>
-      <div className="input-text flex gap-2 px-2 py-2 text-white">
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Main Images</h2>
+      <div className="flex gap-2 px-2 py-2 text-white input-text">
 
           
-          <div className="max-h-fit flex-1">
+          <div className="flex-1 max-h-fit">
               {spineImage ?
-                  <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => SpineImage.current.click()}>Change Spine Image</button>
+                  <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => SpineImage.current.click()}>Change Spine Image</button>
                   :
-                  <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => SpineImage.current.click()}>Add Spine Image</button>
+                  <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => SpineImage.current.click()}>Add Spine Image</button>
               }
               
               <input type="file" id="spineImage" className="hidden" ref={SpineImage} accept="image/*" onChange={(event) => {handleCompressedSpine(event.target.files[0]);}} />
               {spineImage ?
-                  <img className="max-h-60 max-w-full mx-auto my-auto rounded-md" onClick={() => SpineImage.current.click()} src={SpinePreview} />
+                  <img className="max-w-full mx-auto my-auto rounded-md max-h-60" onClick={() => SpineImage.current.click()} src={SpinePreview} />
                   :
-                  <img className="opacity-20 max-h-60 max-w-full mx-auto my-auto rounded-md" onClick={() => SpineImage.current.click()} src={SpinePreviewImage} />
+                  <img className="max-w-full mx-auto my-auto rounded-md opacity-20 max-h-60" onClick={() => SpineImage.current.click()} src={SpinePreviewImage} />
               }
           </div>
           <div className="flex-1">
               {CoverImage ?
-                  <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => CoverImage.current.click()}>Change Cover Image</button>
+                  <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => CoverImage.current.click()}>Change Cover Image</button>
                   :
-                  <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => CoverImage.current.click()}>Add Cover Image</button>
+                  <button className="w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150" onClick={() => CoverImage.current.click()}>Add Cover Image</button>
               }
               <input type="file" id="coverImage" className="hidden" ref={CoverImage} accept="image/*" onChange={(event) => {handleCompressedCover(event.target.files[0])}} />
               {coverImage ?
-                  <img onClick={() => CoverImage.current.click()} className="max-h-60 max-w-full mx-auto my-auto rounded-md" src={CoverPreview} />
+                  <img onClick={() => CoverImage.current.click()} className="max-w-full mx-auto my-auto rounded-md max-h-60" src={CoverPreview} />
                   :
-                  <img onClick={() => CoverImage.current.click()} className="opacity-20 max-h-60 max-w-full mx-auto my-auto rounded-md" src={CoverPreviewImage} />
+                  <img onClick={() => CoverImage.current.click()} className="max-w-full mx-auto my-auto rounded-md opacity-20 max-h-60" src={CoverPreviewImage} />
               }
           </div>
       </div>
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Other Images</h2>
-      <div className="input-text flex flex-wrap gap-4 px-4 py-2 text-white rounded-lg">
-        <img className="image h-32 pointer-events-auto" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
-        <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files[0])}} />
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Other Images</h2>
+      <div className="flex flex-wrap gap-4 px-4 py-2 text-white rounded-lg input-text">
+        <img alt="Add another image" className="h-32 pointer-events-auto image" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
+        <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files)}} multiple/>
         {OtherPreview && OtherPreview.map(
           (item, idx) => (
             <div className="image-div" key={idx.toString()} id={idx.toString()}>
-              <img className="max-h-32 image outline outline-white rounded-lg opacity-50" src={item} />
+              <img className="rounded-lg opacity-50 max-h-32 image outline outline-white" src={item} />
               <div onClick={() => remove(idx)} className="hidden_img">
               <svg className="mx-auto my-auto text-xl font-bold text-white" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="-6 6 24 24" strokeWidth="1" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
                   <path stroke="currentColor" d="M10 10l4 4m0 -4l-4 4" />
@@ -436,8 +483,8 @@ export default function ViewBook(props) {
       <div className="flex justify-between pt-4">
         <a className="warning-button" onClick={() => {setDeletePrompt(true)}}>Delete</a>
         <div className="flex justify-end">
-          <a onClick={() => setEditMode(false)} className="secondary-button mr-4 cursor-pointer select-none">Cancel</a> 
-          <button onClick={() => {submit()} } className="primary-button mr-0 select-none">Submit</button>
+          <a onClick={() => setEditMode(false)} className="mr-4 cursor-pointer select-none secondary-button">Cancel</a> 
+          <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
         </div>
       </div>
       
@@ -453,55 +500,55 @@ export default function ViewBook(props) {
 
     <>
       {/* Scrollable Book Images */}
-      <div className="justify-right snap-mandatory snap-x z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll">
-        <div className="min-w-max z-50 text-transparent select-none">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
-        <div className="snap-center min-w-max z-20" onClick={props.data.coverImage ? () => {setLargeImage(props.data.coverImage), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
-          <img className="shadow-black h-64 rounded-md shadow-2xl cursor-pointer" src={props.data.coverImage ? getImageUrl(props.data.id, props.data.coverImage) : props.data.spineImage ? null : noImage} />
+      <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
+        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+        <div className="z-20 snap-center min-w-max" onClick={props.data.coverImage ? () => {setLargeImage(props.data.coverImage), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
+          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={props.data.coverImage ? getImageUrl(props.data.id, props.data.coverImage) : props.data.spineImage ? null : noImage} />
         </div>
         {props.data.spineImage ?
-        <div className="snap-center min-w-max z-20" onClick={props.data.spineImage ? () => {setLargeImage(props.data.spineImage), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
-          <img className="shadow-black h-64 rounded-md shadow-2xl cursor-pointer" src={props.data.spineImage ? getImageUrl(props.data.id, props.data.spineImage) : props.data.coverImage ? null : noImage} />
+        <div className="z-20 snap-center min-w-max" onClick={props.data.spineImage ? () => {setLargeImage(props.data.spineImage), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
+          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={props.data.spineImage ? getImageUrl(props.data.id, props.data.spineImage) : props.data.coverImage ? null : noImage} />
         </div> : null}
         {props.data.otherImages.map((image, idx) => (
-          <div key={idx.toString()} id={idx.toString()} className="snap-center min-w-max z-20" onClick={image ? () => {setLargeImage(image), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
-            <img className="shadow-black h-64 rounded-md shadow-2xl cursor-pointer" src={image ? getImageUrl(props.data.id, image) : noImage} />
+          <div key={idx.toString()} id={idx.toString()} className="z-20 snap-center min-w-max" onClick={image ? () => {setLargeImage(image), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
+            <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={image ? getImageUrl(props.data.id, image) : noImage} />
           </div>
         ))}
-        <div className="min-w-max z-50 text-transparent select-none">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
       </div>
-      <div className="bg-black/40 drop-shadow-strong px-4 pb-16">
+      <div className="px-4 pb-16 bg-black/40 drop-shadow-strong">
         <h2 className="text-3xl text-white">{props.data.name ? props.data.name : <span className="text-gray-100">Unknown Title</span>}
         <span className="font-light text-gray-300"> ({props.data.publishDate.split(' ')[0].split('-')[0]})</span></h2>
         <h2 className="text-2xl font-light text-white">Author: {props.data.author ? props.data.author : <>Unknown</>}</h2>
-        <h2 className="text-md pt-2 font-light text-gray-300">Published in {props.data.publishDate.split(' ')[0].split('-')[2]}/{props.data.publishDate.split(' ')[0].split('-')[1]}/{props.data.publishDate.split(' ')[0].split('-')[0]}</h2>
-        <h2 className="text-md font-light text-gray-300">by {props.data.publisher ? props.data.publisher : <>Unknown</>}</h2>
+        <h2 className="pt-2 font-light text-gray-300 text-md">Published in {props.data.publishDate.split(' ')[0].split('-')[2]}/{props.data.publishDate.split(' ')[0].split('-')[1]}/{props.data.publishDate.split(' ')[0].split('-')[0]}</h2>
+        <h2 className="font-light text-gray-300 text-md">by {props.data.publisher ? props.data.publisher : <>Unknown</>}</h2>
         {borrower ?
-        <div className="border-t-white pt-4 mt-4 border-t">
+        <div className="pt-4 mt-4 border-t border-t-white">
           <h2 className="text-xl">Borrowed By: {borrower}</h2>
         </div> : <></> }
-        <p className="text-md border-t-white pt-4 mt-4 font-light text-white border-t shadow-md">{props.data.description}</p>
+        <p className="pt-4 mt-4 font-light text-white border-t shadow-md text-md border-t-white">{props.data.description}</p>
         {bookCollections.length == 0 ? 
-        <p className="bg-black/40 backdrop-blur-sm inner-shadow-main w-full py-4 mt-8 text-center text-white rounded-lg">This book is not in any collections
+        <p className="w-full py-4 mt-8 text-center text-white rounded-lg bg-black/40 backdrop-blur-sm inner-shadow-main">This book is not in any collections
         </p> : <></>}
       </div>
       {bookCollections.map((collection, idx) => (
-        <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className=" flex flex-col -mt-12 cursor-pointer" style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
-          <div className="justify-right snap-mandatory snap-x z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll">
-            <div className="min-w-max z-50 text-transparent select-none">AGHHHHH!!! SAVE ME!!!!!</div>
+        <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className="flex flex-col -mt-12 cursor-pointer " style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
+          <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
+            <div className="z-50 text-transparent select-none min-w-max">AGHHHHH!!! SAVE ME!!!!!</div>
             { collection.expand.books ? collection.expand.books.map((book, idx) => {return(
-              <div key={idx.toString()} id={idx.toString()} className="snap-center min-w-max z-50">
+              <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
               {book.coverImage ?
-                <img key={idx.toString()} id={idx.toString()} alt="Book cover image" className="h-28 z-60 touch shadow-book my-4 rounded-md cursor-pointer pointer-events-none" src={getThumbImageUrl(book.id, book.coverImage)} />
+                <img key={idx.toString()} id={idx.toString()} alt="Book cover image" className="my-4 rounded-md cursor-pointer pointer-events-none h-28 z-60 touch shadow-book" src={getThumbImageUrl(book.id, book.coverImage)} />
                 :
-                <img key={idx.toString()} id={idx.toString()} alt="No book cover image" className="h-28 z-60 touch shadow-book my-4 rounded-md cursor-pointer pointer-events-none" src={noImage} />}
+                <img key={idx.toString()} id={idx.toString()} alt="No book cover image" className="my-4 rounded-md cursor-pointer pointer-events-none h-28 z-60 touch shadow-book" src={noImage} />}
               </div>
             )}) : null }
-            <div className="min-w-max z-50 text-transparent select-none">AGHHHHH!!! SAVE ME!!!!!</div>
+            <div className="z-50 text-transparent select-none min-w-max">AGHHHHH!!! SAVE ME!!!!!</div>
           </div>
           {collection.expand.books ? 
-            <div className="shelf pl-4 text-xl text-white"><p className="bottom-4 text-shadow left-2 absolute select-none">{collection.name ? collection.name : "No name"}</p></div>
+            <div className="pl-4 text-xl text-white shelf"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
             :
-            <div className="shelf mt-36 pl-4 text-xl text-white"><p className="bottom-4 text-shadow left-2 absolute select-none">{collection.name ? collection.name : "No name"}</p></div>
+            <div className="pl-4 text-xl text-white shelf mt-36"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
           }
         </div>
       ))}
