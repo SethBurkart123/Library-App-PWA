@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import PocketBase from 'pocketbase';
 import { List, arrayMove, arrayRemove } from 'react-movable';
 import noImage from '../../../images/noImage.jpeg';
 import {global, getImageUrl } from '../../../globalVars';
+import LoaderButton from '../../../components/LoaderButton';
 
 const RemovableIcon = () => (
   <svg
@@ -41,7 +41,6 @@ const HamburgerIcon = () => (
 
 
 export default function CreateCollection() {
-  const navigate = new useNavigate();
   const client = new PocketBase(global.pocketbaseDomain);
     
   const [search, setSearch] = useState('');
@@ -49,8 +48,9 @@ export default function CreateCollection() {
   const [collectionName, setCollectionName] = useState('');
   const [description, setDescription] = useState('');
   
-  const [books, setBooks] = React.useState([]);
-  const [items, setItems] = React.useState([]);
+  const [books, setBooks] = useState([]);
+  const [items, setItems] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
 
 
   const getBooks = async (searchRequest) => {
@@ -79,12 +79,14 @@ export default function CreateCollection() {
       "name": collectionName,
       "description": description
     };
+    setSubmitted(true);
 
     try {
       const record = await client.collection('collection').create(data);
-      navigate('/')
+      window.location.href = '/';
     } catch(err) {
       //console.log(err);
+      setSubmitted(false);
     }
   }
 
@@ -188,7 +190,7 @@ export default function CreateCollection() {
 
       <div className="flex gap-4 pt-4">
         <a href="/" className="secondary-button ml-auto">Cancel</a>
-        <button onClick={() => {submit()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
+        <LoaderButton onClick={submit} submitted={submitted}>Submit</LoaderButton>
       </div>
       
     </div>

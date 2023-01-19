@@ -5,6 +5,7 @@ import { UserIcon } from '@heroicons/react/24/outline';
 
 import { global } from '../../globalVars';
 import Layout from '../../components/layout';
+import LoaderButton from '../../components/LoaderButton';
 
 export default function Settings() {
   const client = new PocketBase(global.pocketbaseDomain);
@@ -22,6 +23,7 @@ export default function Settings() {
   const [passwordMatch, setPasswordMatch] = useState(false);
   const [wrongPassword, setWrongPassword] = useState(false);
   const [totalCost, setTotalCost] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
 
   
 
@@ -129,7 +131,7 @@ export default function Settings() {
           <input placeholder='Username' autoComplete='username' type="text" className="input-text" value={name} onChange={(e) => setName(e.target.value)} />
           <div className="flex gap-4 pt-4">
             <a onClick={() => {setEditUsername(false)}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
-            <button type="submit" onClick={() => {setEditUsername(false), submitUsername()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
+            <LoaderButton type="submit" onClick={() => {setEditUsername(false), submitUsername()}} submitted={submitted}>Submit</LoaderButton>
           </div>
         </div> :
         <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg text-white">{name}</p>
@@ -142,7 +144,7 @@ export default function Settings() {
           <input placeholder='Email' autoComplete='Email' type="text" className="input-text" value={email} onChange={(e) => setEmail(e.target.value)} />
           <div className="flex gap-4 pt-4">
             <a onClick={() => {setEditEmail(false)}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
-            <button type="submit" onClick={() => {setEditEmail(false), submitEmail()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
+            <LoaderButton type="submit" onClick={() => {setEditEmail(false), submitEmail()}} submitted={submitted}>Submit</LoaderButton>
           </div>
         </div> :
         <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg text-white">{email}</p>
@@ -157,7 +159,7 @@ export default function Settings() {
           <span className="sm:inline block">The password is not correct.</span>
           </div>
           : <></>}
-          <form className="flex flex-col gap-2" onSubmit={() => {event.preventDefault(), submitPassword()}}>
+          <form className="flex flex-col gap-2" ononClick={() => {event.preventDefault(), submitPassword()}}>
             <input autoComplete='email' type="email" className="hidden" placeholder='Email' />
             <input autoComplete='current-password' type="password" className="input-text" placeholder='Old password' value={password} onChange={(e) => {setPassword(e.target.value), setWrongPassword(false)}} />
             <input autoComplete='new-password' type="password" className="input-text" placeholder='New password' value={newPassword} onChange={(e) => {setNewPassword(e.target.value); if (newPasswordConfirm !== e.target.value) {setPasswordMatch(true)} else {setPasswordMatch(false)}}} />
@@ -167,7 +169,7 @@ export default function Settings() {
             <input autoComplete='new-password' type="password" className="input-text" placeholder='Confirm new password' value={newPasswordConfirm} onChange={(e) => {setNewPasswordConfirm(e.target.value), setPasswordMatch(false); if (e.target.value !== newPassword) {setPasswordMatch(true)} else {setPasswordMatch(false)}}} />
             <div className="flex gap-4 pt-4">
               <a onClick={() => {setEditPassword(false), resetPasswordVars()}} className="secondary-button ml-auto cursor-pointer">Cancel</a>
-              <button type='submit' className="primary-button bg-green-500/20 mr-0">Submit</button>
+              <LoaderButton type='submit' submitted={submitted}>Submit</LoaderButton>
             </div>
           </form>
         </div>

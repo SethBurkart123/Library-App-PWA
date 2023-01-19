@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, memo } from 'react';
 import Footer from './footer';
 import background from '../images/background2.webp';
 
-const Layout = (props) => {
+const Layout = memo((props) => {
   const elementRef = useRef(null);
   const [scrolling, setScrolling] = useState(false);
 
@@ -61,6 +61,6 @@ const Layout = (props) => {
       </div>
     </div>
   );
-}
+})
 
 export default Layout;

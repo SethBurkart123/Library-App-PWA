@@ -1,23 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect, lazy } from 'react';
 import {
   Routes,
   Route,
   useLocation,
 } from 'react-router-dom';
 import './css/style.css';
+import { Loading } from './components/Loading';
 
-
-import Search from './pages/app/Search';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import Settings from './pages/app/settings';
-import ResetPassword from './pages/ResetPassword';
-import PageNotFound from './pages/PageNotFound';
-import CreateBook from './pages/app/create/book';
-import PaymentRedirect from './pages/PaymentRedirect';
+const Search = lazy(() => import('./pages/app/Search'));
+const SignIn = lazy(() => import('./pages/SignIn'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const Settings = lazy(() => import('./pages/app/settings'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const PageNotFound = lazy(() => import('./pages/PageNotFound'));
+const CreateBook = lazy(() => import('./pages/app/create/book'));
+const PaymentRedirect = lazy(() => import('./pages/PaymentRedirect'));
 
 function App() {
-
   const location = useLocation();
 
   useEffect(() => {
@@ -29,15 +28,51 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/settings" element={<Settings />} />
-        <Route exact path="/search" element={<Search />} />
-        <Route path="/" element={<Search />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/create" element={<CreateBook />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/payment-redirect" element={<PaymentRedirect />} />
-        <Route path="*" element={<PageNotFound />} />
+        <Route exact path="/settings" element={
+          <Suspense fallback={<Loading />}>
+            <Settings  />
+          </Suspense>
+        } />
+        <Route exact path="/search" element={
+        <Suspense fallback={<Loading />}>
+          <Search />
+        </Suspense>
+        } />
+        <Route path="/" element={
+        <Suspense fallback={<Loading />}>
+          <Search />
+        </Suspense>
+        } />
+        <Route path="/signin" element={
+        <Suspense fallback={<Loading />}>
+          <SignIn />
+        </Suspense>
+        } />
+        <Route path="/signup" element={
+        <Suspense fallback={<Loading />}>
+          <SignUp />
+        </Suspense>
+        } />
+        <Route path="/create" element={
+        <Suspense fallback={<Loading />}>
+          <CreateBook />
+        </Suspense>
+        } />
+        <Route path="/reset-password" element={
+        <Suspense fallback={<Loading />}>
+          <ResetPassword />
+        </Suspense>
+        } />
+        <Route path="/payment-redirect" element={
+        <Suspense fallback={<Loading />}>
+          <PaymentRedirect />
+        </Suspense>
+        } />
+        <Route path="*" element={
+        <Suspense fallback={<Loading />}>
+          <PageNotFound />
+        </Suspense>
+        } />
       </Routes>
     </>
   );

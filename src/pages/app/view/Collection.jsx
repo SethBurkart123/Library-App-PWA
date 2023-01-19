@@ -3,13 +3,15 @@ import noImage from '../../../images/noImage.jpeg';
 import { getImageUrl, global } from "../../../globalVars";
 import PocketBase from 'pocketbase';
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/layout';
+import LoaderButton, { DeleteLoaderButton } from '../../../components/LoaderButton';
 
 export default function viewCollection(props) {
   const client = new PocketBase(global.pocketbaseDomain);
   const [deletePrompt, setDeletePrompt] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
   return (
     <Layout overlay={
       <>
@@ -20,11 +22,12 @@ export default function viewCollection(props) {
               <p className="font-light">This will delete this collection forever!</p>
               <div className="flex justify-end gap-4 mt-2">
                 <button onClick={() => setDeletePrompt(false)} className="secondary-button">Cancel</button>
-                <button onClick={ async () => {
-                  const record = await client.collection('collection').delete(props.data.id);
+                <DeleteLoaderButton submitted={submitted} onClick={ async () => {
+                  setSubmitted(true);
+                  try { await client.collection('collection').delete(props.data.id) } catch (error) { setSubmitted(false) }
                   window.location.href = "/";
                   window.location.reload(true);
-                }} className="warning-button">Delete</button>
+                }}>Delete</DeleteLoaderButton>
               </div>
             </div>
           </div>
@@ -93,6 +96,7 @@ function EditCollection(props) {
   const [items, setItems] = useState([]);
 
   const ranOnce = useRef(false);
+  const [submitted, setSubmitted] = useState(false);
 
 
   const getBooks = async (searchRequest) => {
@@ -254,9 +258,9 @@ function EditCollection(props) {
       />
 
       <div className="flex gap-4 pt-4">
-        <a className="warning-button" onClick={() => props.setDeletePrompt(true)}>Delete</a>
+        <a className="warning-button cursor-pointer select-none" onClick={() => props.setDeletePrompt(true)}>Delete</a>
         <a onClick={() => props.setEditMode(false)} className="secondary-button ml-auto">Cancel</a>
-        <button onClick={() => {submit()}} className="primary-button mr-0">Submit</button>
+        <LoaderButton onClick={submit} submitted={submitted}>Submit</LoaderButton>
       </div>
     </div>
   )
