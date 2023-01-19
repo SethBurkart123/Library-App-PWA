@@ -17,7 +17,6 @@ export default function Footer() {
       // settings
       setLocation('settings')
     }
-    console.log(location)
   }, [])
   return(
     <div className="sticky bottom-0 left-0 z-50 h-0">

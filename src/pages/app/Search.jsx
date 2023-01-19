@@ -5,12 +5,13 @@ import React, {
   Suspense,
   lazy,
 } from 'react';
-import PocketBase from 'pocketbase';
+import PocketBase, { Collection } from 'pocketbase';
 import { getThumbImageUrl, global } from '../../globalVars';
 import { Borrower } from './../../components/borrower';
 import { Author } from '../../components/author';
 import noImage from '../../images/noImage.jpeg';
 import Layout from '../../components/layout';
+import { Loading } from '../../components/Loading';
 
 const InstallPrompt = lazy(() => import('../../components/installPrompt'));
 const CollectionMenuItem = lazy(() => import('./view/Collection'));
@@ -205,7 +206,7 @@ export default React.memo(function Search() {
       bookObserver.current.disconnect();
       }
     };
-  }, [bookRef]);
+  }, [bookRef, bookMenu, collectionMenu]);
 
 
 
@@ -232,7 +233,7 @@ export default React.memo(function Search() {
       collectionObserver.current.disconnect();
       }
     };
-  }, [collectionRef]);
+  }, [collectionRef, bookMenu, collectionMenu]);
 
   const [currentIdx, setCurrentIdx] = useState(0);
   function parseBack(idx, bookData) {
@@ -254,15 +255,7 @@ export default React.memo(function Search() {
     <>
       {bookMenu ? 
       <Suspense fallback={
-        <div className="bg-wood-side-dark w-screen h-screen">   
-          <div className="profile-main-loader">
-            <div className="loader">
-              <svg className="circular-loader"viewBox="25 25 50 50" >
-                <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <Loading />
       }>
         <BookMenuItem
         backFunction={setBookMenu}
@@ -277,15 +270,7 @@ export default React.memo(function Search() {
       : null }
       {collectionMenu && !bookMenu ? 
       <Suspense fallback={
-        <div className="bg-wood-side-dark w-screen h-screen">   
-          <div className="profile-main-loader">
-            <div className="loader">
-              <svg className="circular-loader"viewBox="25 25 50 50" >
-                <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <Loading />
       }>
       <CollectionMenuItem
         backFunction={setCollectionMenu}

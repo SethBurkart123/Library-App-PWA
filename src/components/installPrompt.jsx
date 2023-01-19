@@ -30,7 +30,6 @@ const InstallPrompt = () => {
   const promptInstall = () => {
     setDimmed(true);
     setShowPrompt(false);
-    console.log(deferredPrompt);
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
