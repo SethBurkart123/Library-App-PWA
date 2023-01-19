@@ -94,7 +94,7 @@ export default function CreateCollection() {
     <>
     <div className="px-4 text-white">
       
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Collection Name</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white">Collection Name</h2>
       <input maxLength={100} type="text" className="input-text w-full px-4 py-2 text-white" value={collectionName} onChange={(e) => setCollectionName(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description <span className="italic text-gray-300">(optional)</span></h2>
       <textarea maxLength={5000} rows="18" type="text" className="input-text w-full px-4 py-2 text-white" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />

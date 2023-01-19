@@ -123,7 +123,6 @@ export default React.memo(function Search() {
     if (maxCollectionPages <= 0) {
       setMaxCollectionPages(1)
     }
-   
   }
 
 
@@ -330,7 +329,7 @@ export default React.memo(function Search() {
       </div>
     }>
       {collections.length != 0 ? <div className="mb-16" ref={top}></div> : <div className="mb-4" ref={top}></div>}
-      {author == "" && borrower == "" ? collections.map((collection, idx) => (
+      {author == "" && borrower == "" && borrowerCheckbox == false ? collections.map((collection, idx) => (
         <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className=" flex flex-col -mt-12 cursor-pointer" style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
           <div className="justify-right snap-mandatory snap-x z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll">
             <div className="min-w-fit z-50 text-transparent select-none">AGHHHH!!! SAVE ME!!!!!</div>
