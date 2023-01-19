@@ -8,6 +8,7 @@ import global  from '../../../globalVars';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import Layout from '../../../components/layout';
 import LoaderButton from '../../../components/LoaderButton';
+import InstallPrompt from '../../../components/installPrompt';
 
 export default function createBook() {
   const client = new PocketBase(global.pocketbaseDomain);
@@ -153,7 +154,7 @@ export default function createBook() {
   async function createBook(data, images) {
     try {
       const record = await client.collection('book').create(data);
-      const imagesRecord = await client.collection('book').update(record.id, images);
+      await client.collection('book').update(record.id, images);
       // redirect to search page
       window.location.href = '/';
     } catch (err) {
@@ -234,7 +235,9 @@ export default function createBook() {
   }
 
   return(
-    <Layout topbar={
+    <Layout overlay={
+      <InstallPrompt hideInstallPrompt={true} />
+    } topbar={
       
       <div className="flex">
       {
@@ -311,7 +314,7 @@ export default function createBook() {
                     <button className="inner-shadow-main border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white bg-transparent border-2 rounded-lg shadow-inner" onClick={() => SpineImage.current.click()}>Set Spine Image</button>
                 }
                 
-                <input type="file" id="spineImage" className="hidden" ref={SpineImage} accept="image/*" onChange={(event) => {handleCompressedSpine(event.target.files[0]);}} />
+                <input type="file" id="spineImage" className="hidden" ref={SpineImage} accept="image/jpg, image/jpeg, image/png, image/svg+xml, image/gif, image/webp" onChange={(event) => {handleCompressedSpine(event.target.files[0]);}} />
                 {spineImage ?
                     <img alt="Spine Image" className="max-h-60 max-w-full mx-auto my-auto rounded-md" onClick={() => SpineImage.current.click()} src={SpinePreview} />
                     :
@@ -324,7 +327,7 @@ export default function createBook() {
                     :
                     <button className="inner-shadow-main bg-white/0 border-white/20 backdrop-blur-sm backdrop-brightness-150 w-full px-4 py-2 mb-4 text-white border-2 rounded-lg shadow-inner" onClick={() => CoverImage.current.click()}>Set Cover Image</button>
                 }
-                <input type="file" id="coverImage" className="hidden" ref={CoverImage} accept="image/*" onChange={(event) => {handleCompressedCover(event.target.files[0])}} />
+                <input type="file" id="coverImage" className="hidden" ref={CoverImage} accept="image/jpg, image/jpeg, image/png, image/svg+xml, image/gif, image/webp" onChange={(event) => {handleCompressedCover(event.target.files[0])}} />
                 {coverImage ?
                     <img alt="Cover Image" onClick={() => CoverImage.current.click()} src={CoverPreview} className="max-h-60 max-w-full mx-auto my-auto rounded-md" />
                     :
@@ -335,7 +338,7 @@ export default function createBook() {
         <h2 className="py-2 pr-4 text-lg font-light text-white">Other Images <span className="italic text-gray-300">(optional)</span></h2>
         <div className="input-text flex flex-wrap gap-4 px-4 py-2 text-white outline-none">
             <img alt="Add another image" className="image h-32 pointer-events-auto" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
-            <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files)}} multiple/>
+            <input type="file" className="hidden" ref={OtherImages} accept="image/jpg, image/jpeg, image/png, image/svg+xml, image/gif, image/webp" name="file" onChange={(event) => {handleCompressedOther(event.target.files)}} multiple/>
             {OtherPreview && OtherPreview.map(
             (item, idx) => (
             <div className="image-div" key={idx.toString()} id={idx.toString()}>

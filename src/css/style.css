@@ -338,7 +338,7 @@ html {
 
 @keyframes showPrompt {
   0% {
-    transform: translate(0rem, 16rem);
+    transform: translate(0rem, 160%);
     display: hidden;
   }
   100% {
@@ -353,7 +353,7 @@ html {
     display: block;
   }
   100% {
-    transform: translate(0rem, 16rem);
+    transform: translate(0rem, 160%);
     display: hidden;
   }
 }

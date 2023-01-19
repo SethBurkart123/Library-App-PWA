@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-const InstallPrompt = () => {
+const InstallPrompt = ({hideInstallPrompt = false}) => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [platform, setPlatform] = useState('');
@@ -49,6 +49,7 @@ const InstallPrompt = () => {
     if (currentPlatform.includes('iPad') || currentPlatform.includes('iPod') || currentPlatform.includes('iPhone')) {
       setPlatform('IOS');
       setShowPrompt(true);
+      promptIOSInstall();
       removeHidden.current.style.display = null;
     } else if (currentPlatform.includes('Android')) {
       setPlatform('Android');
@@ -81,8 +82,8 @@ const InstallPrompt = () => {
   <div
   ref={removeHidden2}
   className={IOSPrompt ?
-    "absolute pointer-events-auto z-top bottom-0 left-0 right-0 showPrompt" :
-    "absolute pointer-events-auto z-top bottom-0 left-0 right-0 hidePrompt"}
+    "absolute pointer-events-auto z-top h-screen bottom-0 flex flex-col justify-center left-0 right-0 showPrompt" :
+    "absolute pointer-events-auto z-top h-screen bottom-0 flex flex-col justify-center left-0 right-0 hidePrompt"}
     style={{
       display: "none"
     }}
@@ -118,7 +119,7 @@ const InstallPrompt = () => {
 
   <div
   ref={removeHidden}
-  className={showPrompt ?
+  className={showPrompt && !IOSPrompt && !hideInstallPrompt ?
     "absolute z-top pointer-events-auto bottom-0 left-0 right-0 showPrompt" :
     "absolute z-top pointer-events-auto bottom-0 left-0 right-0 hidePrompt"}
     style={{

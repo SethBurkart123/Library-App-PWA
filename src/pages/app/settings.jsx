@@ -6,6 +6,7 @@ import { UserIcon } from '@heroicons/react/24/outline';
 import { global } from '../../globalVars';
 import Layout from '../../components/layout';
 import LoaderButton from '../../components/LoaderButton';
+import InstallPrompt from '../../components/installPrompt';
 
 export default function Settings() {
   const client = new PocketBase(global.pocketbaseDomain);
@@ -55,7 +56,7 @@ export default function Settings() {
 
   async function getCustomerPortalURL() {
     await client.collection('users').update(client.authStore.model.id, {"updateCustomerPortalURL": true});
-    const test = await fetch(`${global.pocketbaseDomain}/api/updateCustomerPortalURL`);
+    await fetch(`${global.pocketbaseDomain}/api/updateCustomerPortalURL`);
     const record = await client.collection('users').getOne(client.authStore.model.id, {});
     return record.customerPortalURL;
   }
@@ -70,8 +71,10 @@ export default function Settings() {
   }
 
   const submitPassword = async () => {
+    setSubmitted(true);
     if (passwordMatch) {
       //console.log("Passwords do not match!")
+      setSubmitted(false);
       return "Passwords do not match";
     }
     //console.log("SUbmitting");
@@ -85,20 +88,26 @@ export default function Settings() {
 
 
       const record = await client.collection('users').update(client.authStore.model.id, data);
-
+      
       // Relogin
       if (email && newPassword) {
-        loginWithEmail(email, newPassword);
+        try {
+          loginWithEmail(email, newPassword);
+        } catch {
+          setSubmitted(false);
+        }
       }
+      setSubmitted(false);
     } catch (err) {
       //console.log(err)
       setWrongPassword(true);
+      setSubmitted(false);
     }
   }
 
   async function loginWithEmail(email, password) {
     try {
-      const authData = await client.collection('users').authWithPassword(email, password);
+      await client.collection('users').authWithPassword(email, password);
       resetPasswordVars();
     } catch {
       setLoginError(true);
@@ -107,19 +116,20 @@ export default function Settings() {
 
   const submitUsername = async () => {
     try {
+      setSubmitted(true);
       //update username data
       const data = {
         "username": name
       };
 
-      //
-      const record = await client.collection('users').update(client.authStore.model.id, data);
-    } catch {}
+      await client.collection('users').update(client.authStore.model.id, data);
+      setSubmitted(false);
+    } catch {setSubmitted(false);}
   }
 
   const CancelSubscription = async () => {
-    const record = await client.collection('users').update( client.authStore.model.id, {subCancelIntent: true} );
-    const response = await fetch(`${global.pocketbaseDomain}/api/cancelSubscription`);
+    await client.collection('users').update( client.authStore.model.id, {subCancelIntent: true} );
+    await fetch(`${global.pocketbaseDomain}/api/cancelSubscription`);
   }
 
 
@@ -127,7 +137,9 @@ export default function Settings() {
     getUserData();
   }, [])
   return(
-    <Layout topbar={
+    <Layout overlay={
+      <InstallPrompt hideInstallPrompt={true} />
+    } topbar={
       <h1 className='border-b-white/20 inner-shadow-main bg-black/40 backdrop-blur-md flex flex-1 gap-2 px-4 pt-2 pb-2 text-2xl font-bold text-white border-b-2'>
         <UserIcon className='h-6 my-auto' />
         Settings

@@ -5,7 +5,7 @@ import React, {
   Suspense,
   lazy,
 } from 'react';
-import PocketBase, { Collection } from 'pocketbase';
+import PocketBase from 'pocketbase';
 import { getThumbImageUrl, global } from '../../globalVars';
 import { Borrower } from './../../components/borrower';
 import { Author } from '../../components/author';
@@ -285,7 +285,7 @@ export default React.memo(function Search() {
     </> :
     <Layout
     overlay={
-      <>{success === 'true' ? <InstallPrompt /> : null}</>
+      <InstallPrompt hideInstallPrompt={true} />
     }
     topbar={
       <div className="fully-rounded bg-black/50 px-2 pt-2 transition" style={{boxShadow: "0px 13px 16px -3px rgba(0,0,0,1)"}}>
@@ -356,8 +356,8 @@ export default React.memo(function Search() {
       {books.map((book, idx) => (
       <div key={idx.toString()} id={idx.toString()}>
         {book.borrowedBy.length == 0 ?
-        <BookMenuItem2 className="bg-black/40 backdrop-blur-sm outline-white/10 outline flex gap-1 px-2 py-2 mx-2 rounded-lg cursor-pointer" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} /> :
-        <BookMenuItem2 className="backdrop-blur-lg bg-black/60 border-white/50 brightness-50 flex gap-1 px-2 py-2 mx-2 border-4 border-double rounded-lg cursor-pointer" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} />
+        <Book className="bg-black/40 backdrop-blur-sm outline-white/10 outline flex gap-1 px-2 py-2 mx-2 rounded-lg cursor-pointer" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} /> :
+        <Book className="backdrop-blur-lg bg-black/60 border-white/50 brightness-50 flex gap-1 px-2 py-2 mx-2 border-4 border-double rounded-lg cursor-pointer" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} />
         }
       </div>
       ))}
@@ -371,7 +371,7 @@ export default React.memo(function Search() {
 });
 
 
-function BookMenuItem2({setBookData, book, setBookMenu, setCurrentIdx, idx, className}) {
+function Book({setBookData, book, setBookMenu, setCurrentIdx, idx, className}) {
   return <a onClick={() => { setBookData(book), setBookMenu(true), setCurrentIdx(idx); } } className={className}>
     <div className="place-items-center grid w-2/3 select-none" style={{ minHeight: "4rem" }}>
       {book.coverImage ?
