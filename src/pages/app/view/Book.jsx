@@ -533,7 +533,7 @@ export default function ViewBook(props) {
         </p> : <></>}
       </div>
       {bookCollections.map((collection, idx) => (
-        <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className=" flex flex-col -mt-12 cursor-pointer" style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
+        <div onClick={() => {props.setCollectionData(collection), props.setCollectionMenu(true), props.setBookMenu(false)}} className=" flex flex-col -mt-12 cursor-pointer" style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
           <div className="justify-right snap-mandatory snap-x z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll">
             <div className="min-w-max z-50 text-transparent select-none">AGHHHHH!!! SAVE ME!!!!!</div>
             { collection.expand.books ? collection.expand.books.map((book, idx) => {return(
