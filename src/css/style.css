@@ -339,17 +339,21 @@ html {
 @keyframes showPrompt {
   0% {
     transform: translate(0rem, 160%);
+    display: hidden;
   }
   100% {
     transform: translate(0rem);
+    display: block;
   }
 }
 
 @keyframes hidePrompt {
   0% {
     transform: translate(0rem);
+    display: block;
   }
   100% {
     transform: translate(0rem, 160%);
+    display: hidden;
   }
 }

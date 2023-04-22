@@ -263,7 +263,6 @@ export default React.memo(function Search() {
         backFunction={setBookMenu}
         setBookData={setBookData} 
         setCollectionMenu={setCollectionMenu}
-        setBookMenu={setBookMenu}
         setCollectionData={setCollectionData}
         currentIdx={currentIdx}
         parseBack={parseBack}

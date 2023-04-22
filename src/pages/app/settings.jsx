@@ -231,14 +231,7 @@ export default function Settings() {
         <p className="sm:col-span-2 sm:mt-0 flex-1 mt-1 text-lg">${totalCost.toFixed(2)}</p>
       }
       </>
-      }
-      </div>
-      <div className="flex mb-8">
-        <p className="text-gray-200/70 flex-1 text-lg font-medium">Have a problem?</p>
-        <div className="flex flex-col flex-1">
-          <a href='mailto:support@libraryapp.co' className="primary-button text-center">Contact us</a>
-          <p className="py-2 text-sm font-light text-center text-white">support@libraryapp.co</p>
-        </div>
+}
       </div>
     </div>
     <div className="flex flex-col items-center my-auto">

@@ -50,6 +50,7 @@ const InstallPrompt = ({hideInstallPrompt = false}) => {
       setPlatform('IOS');
       setShowPrompt(true);
       promptIOSInstall();
+      removeHidden.current.style.display = null;
     } else if (currentPlatform.includes('Android')) {
       setPlatform('Android');
     } else if (currentPlatform.includes('Win')) {
@@ -115,33 +116,30 @@ const InstallPrompt = ({hideInstallPrompt = false}) => {
     </div>
   </div>
 
-  {
-    !hideInstallPrompt ?
+
+  <div
+  ref={removeHidden}
+  className={showPrompt && !IOSPrompt && !hideInstallPrompt ?
+    "absolute z-top pointer-events-auto bottom-0 left-0 right-0 showPrompt" :
+    "absolute z-top pointer-events-auto bottom-0 left-0 right-0 hidePrompt"}
+    style={{
+      display: "none"
+    }}
+    >
     <div
-    ref={removeHidden}
-    className={showPrompt && !IOSPrompt && !hideInstallPrompt ?
-      "absolute z-top pointer-events-auto bottom-0 left-0 right-0 showPrompt" :
-      "absolute z-top pointer-events-auto bottom-0 left-0 right-0 hidePrompt"}
-      style={{
-        display: "none"
-      }}
-      >
-      <div
-      className="bg-white/50 md:w-65vh backdrop-blur-md rounded-t-3xl flex w-full gap-4 px-4 py-2 mx-auto transition-transform duration-1000 delay-500">
-        <img src="https://app.libraryapp.co/192x192.png" className="w-12 h-12" />
-        <p className="whitespace-nowrap fancy sm:text-2xl my-auto overflow-hidden text-xl font-medium">Library App</p>
-        <button onClick={() => platform == "IOS" ? promptIOSInstall() : promptInstall()} className="px-8 ml-auto text-white bg-blue-600 rounded-full">Install</button>
-        <div className="z-10 my-auto" onClick={() => {setShowPrompt(false), setDimmed(false)}}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
+    className="bg-white/50 md:w-65vh backdrop-blur-md rounded-t-3xl flex w-full gap-4 px-4 py-2 mx-auto transition-transform duration-1000 delay-500">
+      <img src="https://app.libraryapp.co/192x192.png" className="w-12 h-12" />
+      <p className="whitespace-nowrap fancy sm:text-2xl my-auto overflow-hidden text-xl font-medium">Library App</p>
+      <button onClick={() => platform == "IOS" ? promptIOSInstall() : promptInstall()} className="px-8 ml-auto text-white bg-blue-600 rounded-full">Install</button>
+      <div className="z-10 my-auto" onClick={() => {setShowPrompt(false), setDimmed(false)}}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </div>
     </div>
-    : null
-  }
   </div>
-}
+  </div>
+  }
   </>
   );
 }
