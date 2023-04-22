@@ -10,7 +10,6 @@ export default function viewCollection(props) {
   const client = new PocketBase(global.pocketbaseDomain);
   const [deletePrompt, setDeletePrompt] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   return (
     <Layout overlay={
@@ -134,7 +133,7 @@ function EditCollection(props) {
     };
 
     try {
-      const record = await client.collection('collection').update(props.data.id, data);
+      await client.collection('collection').update(props.data.id, data);
 
       //reload to update search
       window.location.reload(false);
@@ -213,7 +212,7 @@ function EditCollection(props) {
             {children}
           </ul>
         )}
-        renderItem={({ value, props, index, isDragged, isSelected }) => (
+        renderItem={({ value, props, index, isDragged }) => (
           <li
             {...props}
             style={{
@@ -260,7 +259,7 @@ function EditCollection(props) {
       <div className="flex gap-4 pt-4">
         <a className="warning-button cursor-pointer select-none" onClick={() => props.setDeletePrompt(true)}>Delete</a>
         <a onClick={() => props.setEditMode(false)} className="secondary-button ml-auto">Cancel</a>
-        <LoaderButton onClick={submit} submitted={submitted}>Submit</LoaderButton>
+        <LoaderButton onClick={() => {submit, setSubmitted(true)}} submitted={submitted}>Submit</LoaderButton>
       </div>
     </div>
   )
