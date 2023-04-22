@@ -2,10 +2,13 @@
   "name": "simple-react",
   "version": "0.1.0",
   "main": "src/main.jsx",
+  "homepage": "https://sethburkart123.github.io/Library-App-PWA",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -32,6 +35,7 @@
     "@vitejs/plugin-react": "^2.0.0",
     "autoprefixer": "^10.4.13",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^5.0.0",
     "postcss": "^8.4.20",
     "vite": "^3.0.0",
     "vite-plugin-pwa": "^0.14.1"
