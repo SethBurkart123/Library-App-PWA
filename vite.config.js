@@ -9,6 +9,7 @@ export default defineConfig({
   define: {
     'process.env': process.env
   },
+  base: '/Library-App-PWA/',
   css: {
     postcss,
   },
