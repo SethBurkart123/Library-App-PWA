@@ -2,7 +2,6 @@
   "name": "simple-react",
   "version": "0.1.0",
   "main": "src/main.jsx",
-  "homepage": "https://sethburkart123.github.io/Library-App-PWA/",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
