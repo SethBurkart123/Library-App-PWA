@@ -12,6 +12,7 @@ export default defineConfig({
   css: {
     postcss,
   },
+  base: '/Library-App-PWA/',
   plugins: [
     react(),
     VitePWA({
