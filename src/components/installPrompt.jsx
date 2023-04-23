@@ -85,10 +85,10 @@ const InstallPrompt = () => {
       display: "none"
     }}
     >
-    <div className="w-11/12 gap-4 px-2 py-2 pb-6 mx-auto mb-2 transition-transform duration-1000 delay-500 bg-white/90 md:w-55vh backdrop-blur-md rounded-3xl">
+    <div className="bg-white/90 md:w-55vh backdrop-blur-md rounded-3xl w-11/12 gap-4 px-2 py-2 pb-6 mx-auto mb-2 transition-transform duration-1000 delay-500">
       <div className="flex gap-4 px-4 py-2">
-        <img src="https://app.libraryapp.co/192x192.png" className="w-12 h-12" />
-        <p className="my-auto overflow-hidden text-2xl font-medium whitespace-nowrap fancy">Install Library App</p>
+        <img src="/192x192.png" className="w-12 h-12" />
+        <p className="whitespace-nowrap fancy my-auto overflow-hidden text-2xl font-medium">Install Library App</p>
       <div className="z-10 my-auto ml-auto" onClick={() => {setIOSPrompt(false), setDimmed(false), setShowPrompt(true)}}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -124,9 +124,9 @@ const InstallPrompt = () => {
     }}
     >
     <div
-    className="flex w-full gap-4 px-4 py-2 mx-auto transition-transform duration-1000 delay-500 bg-white/50 md:w-65vh backdrop-blur-md rounded-t-3xl">
-      <img src="https://app.libraryapp.co/192x192.png" className="w-12 h-12" />
-      <p className="my-auto overflow-hidden text-2xl font-medium whitespace-nowrap fancy">Library App</p>
+    className="bg-white/50 md:w-65vh backdrop-blur-md rounded-t-3xl flex w-full gap-4 px-4 py-2 mx-auto transition-transform duration-1000 delay-500">
+      <img src="/192x192.png" className="w-12 h-12" />
+      <p className="whitespace-nowrap fancy my-auto overflow-hidden text-2xl font-medium">Library App</p>
       <button onClick={platform == "IOS" ? promptIOSInstall : promptInstall} className="px-8 ml-auto text-white bg-blue-600 rounded-full">Install</button>
       <div className="z-10 my-auto" onClick={() => {setShowPrompt(false), setDimmed(false)}}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
