@@ -18,7 +18,6 @@ import PaymentRedirect from './pages/PaymentRedirect';
 import pwaInstallHandler from 'pwa-install-handler';
 
 function App() {
-
   const location = useLocation();
 
   useEffect(() => {

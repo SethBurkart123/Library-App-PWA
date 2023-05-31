@@ -210,8 +210,8 @@ export default function Settings() {
 }
       </div>
     </div>
-    <div className="flex flex-col items-center my-auto">
-      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='w-3/4 mt-12 warning-button'>Sign Out</a>
+    <div className="flex flex-col items-center px-4 my-auto">
+      <a onClick={() => {client.authStore.clear(), window.location.href = '/signin' }} className='w-full mt-12 text-center warning-button'>Sign Out</a>
     </div>
     </Layout>
   )

@@ -352,7 +352,7 @@ export default function ViewBook(props) {
     
     { editMode ?
     <div className="px-4">
-      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Title</h2>
+      <h2 className="pb-2 pr-4 text-lg font-light text-white ">Book Title</h2>
       <input maxLength={100} type="text" className="input-text" value={bookName} onChange={(e) => setBookName(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Author</h2>
       <input maxLength={100} className="input-text" type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)} />
@@ -460,7 +460,7 @@ export default function ViewBook(props) {
 
 
 
-    <>
+    <div class="min-h-[calc(70.5vh+1px)]">
       {/* Scrollable Book Images */}
       <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
         <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
@@ -516,7 +516,7 @@ export default function ViewBook(props) {
       ))}
 
       <div ref={collectionRef}></div>
-    </>
+    </div>
     }
   </Layout>
   );
