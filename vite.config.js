@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import postcss from './postcss.config.js'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite';
+import postcss from './postcss.config.js';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 
 // https://vitejs.dev/config/
@@ -66,4 +66,4 @@ export default defineConfig({
       transformMixedEsModules: true,
     }
   } 
-})
+});
