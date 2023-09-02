@@ -184,7 +184,23 @@ export default function ViewBook(props) {
       Images.append("otherImages", image, -1);
     });
 
-    //update book
+    // update collections
+
+    collections && collections.forEach(async (item) => {
+      const record = await client.collection('collection').getOne(item.id);
+      let itemsArray = record.books;
+      itemsArray.push(props.data.id);
+      const collectionData = {
+        "books": itemsArray
+      };
+      try {
+        const record = await client.collection('collection').update(item.id, collectionData);
+      } catch(err) {
+        console.error(err);
+      }
+    });
+
+    // update book
     updateBook(data, Images).then(() => {
       //reload to update search
       window.location.reload(false);
@@ -310,6 +326,29 @@ export default function ViewBook(props) {
       }
     };
   }, [collectionRef]);
+
+  const [search, setSearch] = useState('');
+  const [collections, setCollections] = useState([]);
+  const [items, setItems] = useState([]);
+
+  const handleChange = (event) => {
+    setSearch(event.target.value);
+    getCollections(event.target.value);
+  };
+
+  const getCollections = async (searchRequest) => {
+    try {
+      const response = await client.collection('collection').getList(1, 4, {
+        filter: `name ~ "${searchRequest}"`
+      });
+      //reset page on search
+      setCollections(response.items);
+    } catch(err){}
+  }
+
+  function appendCollection(name, id) {
+    setItems((e) => [...e, {name: `${name}`, id: `${id}`}])
+  }
   
   return(
   <Layout overlay={
@@ -442,6 +481,33 @@ export default function ViewBook(props) {
         </div>
         ))}
       </div>
+
+      <h2 className="py-2 pr-4 text-lg font-light text-white">Add to collection</h2>
+      <input type="text" value={search} onChange={handleChange} className="flex items-baseline justify-center input-text" placeholder='Search' />
+      {collections ? collections.map((collection, idx) => (
+        <div className="flex gap-1 px-2 py-2 my-2 rounded-lg bg-black/40" key={idx.toString()} id={idx.toString()}>
+          <div className="flex flex-col w-full">
+            <p className="text-xl text-white ">{collection.name ? 
+            <>{collection.name.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{collection.name.substring(18, 24)}</span></>
+            : "Untitled"}</p>
+            <div className="flex w-full mt-auto mb-0 space-between">
+              <button onClick={() => appendCollection(collection.name, collection.id)} className="ml-auto mr-0 secondary-button bg-gray-500/20">Add</button>
+            </div>
+          </div>
+        </div>
+      )) : null}
+      <div className="flex flex-wrap gap-4 px-4 py-2 text-white rounded-lg input-text">
+        {items.map((item, idx) => (
+          <div className="flex flex-col items-center justify-center w-1/2 px-2 py-2 my-2 rounded-lg bg-black/40" key={idx.toString()} id={idx.toString()}>
+            <p className="text-xl text-white ">{item.name ?
+            <>{item.name.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{item.name.substring(18, 24)}</span></>
+            : "Untitled"}</p>
+            <div className="flex w-full mt-auto mb-0 space-between">
+              <button onClick={() => {setItems(items.filter((item, index) => index != idx))}} className="ml-auto mr-0 secondary-button bg-gray-500/20">Remove</button>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="flex justify-between pt-4">
         <a className="warning-button" onClick={() => {setDeletePrompt(true)}}>Delete</a>
         <div className="flex justify-end">
@@ -482,7 +548,7 @@ export default function ViewBook(props) {
         <h2 className="text-3xl text-white">{props.data.name ? props.data.name : <span className="text-gray-100">Unknown Title</span>}
         <span className="font-light text-gray-300"> ({props.data.publishDate.split(' ')[0].split('-')[0]})</span></h2>
         <h2 className="text-2xl font-light text-white">Author: {props.data.author ? props.data.author : <>Unknown</>}</h2>
-        <h2 className="pt-2 font-light text-gray-300 text-md">Published in {props.data.publishDate.split(' ')[0].split('-')[2]}/{props.data.publishDate.split(' ')[0].split('-')[1]}/{props.data.publishDate.split(' ')[0].split('-')[0]}</h2>
+        <h2 className="pt-2 font-light text-gray-300 text-md">Published in {props.data.publishDate.split(' ')[0].split('-')[0]}</h2>
         <h2 className="font-light text-gray-300 text-md">by {props.data.publisher ? props.data.publisher : <>Unknown</>}</h2>
         {borrower ?
         <div className="pt-4 mt-4 border-t border-t-white">

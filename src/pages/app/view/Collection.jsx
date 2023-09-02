@@ -50,29 +50,29 @@ export default function viewCollection(props) {
     {editMode ?
     <EditCollection client={client} setDeletePrompt={setDeletePrompt} setEditMode={setEditMode} data={props.data} />
     :
-    <>
-    <div className='flex flex-col-reverse'>
+    <div className="min-h-[calc(70.5vh+1px)]">
+      <div className='flex flex-col-reverse'>
+        
+      <div className="z-10 text-xl text-white shelf"></div>
+      <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
+        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+        { props.data.expand.books ? props.data.expand.books.map((book, idx) => {return(
+          <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
+            {book.coverImage ?
+            <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={book.coverImage ? getImageUrl(book.id, book.coverImage) : noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />
+            :
+            <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />}
+          </div>
+        )}) : null }
+        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+      </div>
+      </div>
       
-    <div className="z-10 text-xl text-white shelf"></div>
-    <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
-      <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
-      { props.data.expand.books ? props.data.expand.books.map((book, idx) => {return(
-        <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
-          {book.coverImage ?
-          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={book.coverImage ? getImageUrl(book.id, book.coverImage) : noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />
-          :
-          <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={noImage} onClick={() => {props.setBookData(book), props.setBookMenu(true), props.setCurrentIdx(50)}} />}
-        </div>
-      )}) : null }
-      <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+      <div>
+        <h2 className="mx-4 text-4xl font-light text-white">{props.data.name}</h2>
+        <p className="mx-4 text-white">{props.data.description}</p>
+      </div>
     </div>
-    </div>
-    
-    <div>
-      <h2 className="mx-4 text-4xl font-light text-white">{props.data.name}</h2>
-      <p className="mx-4 text-white">{props.data.description}</p>
-    </div>
-    </>
     }
 
     </Layout>
@@ -95,7 +95,7 @@ function EditCollection(props) {
 
   const getBooks = async (searchRequest) => {
     try {
-      const response = await client.collection('book').getList(1, 4, {
+      const response = await client.collection('book').getList(1, 15, {
         filter: `name ~ "${searchRequest}"`
       });
       //reset page on search
@@ -110,8 +110,8 @@ function EditCollection(props) {
     getBooks(event.target.value);
   }
 
-  function appendBook(name, id) {
-    setItems((e) => [...e, {name: name, id: id}])
+  function appendBook(name, id, coverImage) {
+    setItems((e) => [...e, {name: name, id: id, coverImage: coverImage}])
   }
 
   const submit = async () => {
@@ -146,7 +146,7 @@ function EditCollection(props) {
     setDescription(props.data.description);
     if (props.data.expand.books != undefined) {
       props.data.expand.books.map((book) => {
-        appendBook(book.name, book.id)
+        appendBook(book.name, book.id, book.coverImage)
       });
     }
   }, [])
@@ -154,7 +154,7 @@ function EditCollection(props) {
   return(
     <div className="px-4 text-white">
       
-      <h2 className="py-2 pr-4 text-lg font-light text-white ">Collection Name</h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white">Collection Name</h2>
       <input maxLength={100} type="text" className="input-text" value={name} onChange={(e) => setName(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description</h2>
       <textarea maxLength={5000} rows="18" type="text" autoComplete='off' className="input-text" placeholder="" value={description} onInput={(e) => { console.log(e.target.value); setDescription(e.target.value) }} onChange={(e) => { console.log(e.target.value); setDescription(e.target.value) }} />
@@ -181,7 +181,7 @@ function EditCollection(props) {
             <>{book.author.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white/80 to-white/0 bg-clip-text">{book.author.substring(18, 24)}</span></>
             : "No Author"}</p>
             <div className="flex w-full mt-auto mb-0 space-between">
-              <button onClick={() => appendBook(book.name, book.id)} className="ml-auto mr-0 secondary-button bg-gray-500/20">Add</button>
+              <button onClick={() => appendBook(book.name, book.id, book.coverImage)} className="ml-auto mr-0 secondary-button bg-gray-500/20">Add</button>
             </div>
           </div>
         </div>
@@ -226,7 +226,15 @@ function EditCollection(props) {
                 justifyContent: 'space-between'
               }}
             >
-              <div className="flex gap-4"><HamburgerIcon />
+              <div className="flex gap-4">
+              <div className="flex items-center justify-center">
+                <HamburgerIcon />
+              </div>
+              {value.coverImage ? 
+                <img className="rounded-md max-h-32" src={getImageUrl(value.id, value.coverImage)} />
+                :
+                <img className="rounded-md max-h-32" src={noImage} />
+              }
               {value.name ?
               <p className="text-lg">
                 {value.name.substring(0, 17)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{value.name.substring(17, 22)}

@@ -126,6 +126,7 @@ export default React.memo(function Search() {
         //request books
         const response = await client.collection('book').getList(bookPage, 7, {
           filter: `name ~ "${search}" && author ~ "${author}" && borrowedBy ~ "${borrower}" ${borrowerCheckbox ? "&& borrowedBy != null" : ""}`,
+          sort: "-created",
           $cancelKey: `bookSearch`
         });
         

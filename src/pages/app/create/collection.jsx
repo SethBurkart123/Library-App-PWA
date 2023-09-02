@@ -55,7 +55,7 @@ export default function CreateCollection() {
 
   const getBooks = async (searchRequest) => {
     try {
-      const response = await client.collection('book').getList(1, 4, {
+      const response = await client.collection('book').getList(1, 15, {
         filter: `name ~ "${searchRequest}"`
       });
       //reset page on search
@@ -68,8 +68,8 @@ export default function CreateCollection() {
     getBooks(event.target.value);
   }
 
-  function appendBook(name, id) {
-    setItems((e) => [...e, {name: `${name}`, id: `${id}`}])
+  function appendBook(name, id, coverImage) {
+    setItems((e) => [...e, {name: `${name}`, id: `${id}`, coverImage: `${coverImage}`}])
   }
 
   const submit = async () => {
@@ -92,32 +92,32 @@ export default function CreateCollection() {
     <>
     <div className="px-4 text-white">
       
-      <h2 className=" py-2 pr-4 text-lg font-light text-white">Collection Name</h2>
-      <input maxLength={100} type="text" className="input-text w-full px-4 py-2 text-white" value={collectionName} onChange={(e) => setCollectionName(e.target.value)} />
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Collection Name</h2>
+      <input maxLength={100} type="text" className="w-full px-4 py-2 text-white input-text" value={collectionName} onChange={(e) => setCollectionName(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description <span className="italic text-gray-300">(optional)</span></h2>
-      <textarea maxLength={5000} rows="18" type="text" className="input-text w-full px-4 py-2 text-white" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />
+      <textarea maxLength={5000} rows="18" type="text" className="w-full px-4 py-2 text-white input-text" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />
       
       <h2 className="py-2 pr-4 text-lg font-light text-white">Add Books <span className="italic text-gray-300">(optional)</span></h2>
-      <input type="text" value={search} onChange={handleChange} className="input-text w-full px-4 py-2 text-white" placeholder='Search' />
+      <input type="text" value={search} onChange={handleChange} className="w-full px-4 py-2 text-white input-text" placeholder='Search' />
       {books.map((book, idx) => (
-        <div className="input-text flex gap-1 px-2 py-2 my-2" key={idx.toString()} id={idx.toString()}>
+        <div className="flex gap-1 px-2 py-2 my-2 input-text" key={idx.toString()} id={idx.toString()}>
           <div className="w-1/3" style={{
             minHeight: "4rem"}}>
               {book.coverImage ? 
-              <img className="max-h-32 rounded-md" src={getImageUrl(book.id, book.coverImage)} />
+              <img className="rounded-md max-h-32" src={getImageUrl(book.id, book.coverImage)} />
               :
-              <img className="max-h-32 rounded-md" src={noImage} />
+              <img className="rounded-md max-h-32" src={noImage} />
             }
           </div>
           <div className="flex flex-col w-full">
-            <p className=" text-xl text-white">{book.name ? 
-            <>{book.name.substring(0, 18)}<span className="bg-gradient-to-r from-white to-white/0 bg-clip-text text-transparent">{book.name.substring(18, 24)}</span></>
+            <p className="text-xl text-white ">{book.name ? 
+            <>{book.name.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{book.name.substring(18, 24)}</span></>
             : "Untitled"}</p>
-            <p className="text-white/80 text-lg">{book.author ? 
-            <>{book.author.substring(0, 18)}<span className="bg-gradient-to-r from-white/80 to-white/0 bg-clip-text text-transparent">{book.author.substring(18, 24)}</span></>
+            <p className="text-lg text-white/80">{book.author ? 
+            <>{book.author.substring(0, 18)}<span className="text-transparent bg-gradient-to-r from-white/80 to-white/0 bg-clip-text">{book.author.substring(18, 24)}</span></>
             : "No Author"}</p>
-            <div className="space-between flex w-full mt-auto mb-0">
-              <button onClick={() => appendBook(book.name, book.id)} className="secondary-button bg-gray-500/20 ml-auto mr-0">Add</button>
+            <div className="flex w-full mt-auto mb-0 space-between">
+              <button onClick={() => appendBook(book.name, book.id, book.coverImage)} className="ml-auto mr-0 secondary-button bg-gray-500/20">Add</button>
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function CreateCollection() {
 
       <h2 className="pt-2 pr-4 mt-2 text-lg font-light text-white">Preview Books</h2>
       {items[0] ? null :
-      <p className="input-text w-full px-4 py-2 my-4 text-lg text-center text-white">There are no books in this collection</p>
+      <p className="w-full px-4 py-2 my-4 text-lg text-center text-white input-text">There are no books in this collection</p>
       }
       <List
         values={items}
@@ -143,7 +143,7 @@ export default function CreateCollection() {
             {children}
           </ul>
         )}
-        renderItem={({ value, props, index, isDragged, isSelected }) => (
+        renderItem={({ value, props, index, isDragged }) => (
           <li
             {...props}
             style={{
@@ -152,7 +152,7 @@ export default function CreateCollection() {
               listStyleType: 'none',
               cursor: isDragged ? 'grabbing' : 'grab',
             }}
-            className="bg-wood-side-dark darker outline-1 outline-white/20 outline inner-shadow-main w-full px-4 py-4 my-2 text-white rounded-lg"
+            className="w-full px-4 py-4 my-2 text-white rounded-lg bg-wood-side-dark darker outline-1 outline-white/20 outline inner-shadow-main"
           >
             <div
               style={{
@@ -161,10 +161,18 @@ export default function CreateCollection() {
                 justifyContent: 'space-between'
               }}
             >
-              <div className="flex gap-4"><HamburgerIcon />
-              {value.name ?
+              <div className="flex gap-4">
+              <div className="flex items-center justify-center">
+                <HamburgerIcon />
+              </div>
+              {value.coverImage ? 
+                <img className="rounded-md max-h-32" src={getImageUrl(value.id, value.coverImage)} />
+                :
+                <img className="rounded-md max-h-32" src={noImage} />
+              }
+            {value.name ?
               <p className="text-lg">
-                {value.name.substring(0, 17)}<span className="bg-gradient-to-r from-white to-white/0 bg-clip-text text-transparent">{value.name.substring(17, 22)}
+                {value.name.substring(0, 17)}<span className="text-transparent bg-gradient-to-r from-white to-white/0 bg-clip-text">{value.name.substring(17, 22)}
                 </span>
               </p>
               : "No Name"}
@@ -187,8 +195,8 @@ export default function CreateCollection() {
       />
 
       <div className="flex gap-4 pt-4">
-        <a href="/" className="secondary-button ml-auto">Cancel</a>
-        <button onClick={() => {submit()}} className="primary-button bg-green-500/20 mr-0">Submit</button>
+        <a href="/" className="ml-auto secondary-button">Cancel</a>
+        <button onClick={() => {submit()}} className="mr-0 primary-button bg-green-500/20">Submit</button>
       </div>
       
     </div>
