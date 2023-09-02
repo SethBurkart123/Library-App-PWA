@@ -50,7 +50,7 @@ export default function viewCollection(props) {
     {editMode ?
     <EditCollection client={client} setDeletePrompt={setDeletePrompt} setEditMode={setEditMode} data={props.data} />
     :
-    <div className="min-h-[calc(70.5vh+1px)]">
+    <div className="min-h-[calc(75.5vh+1px)]">
       <div className='flex flex-col-reverse'>
         
       <div className="z-10 text-xl text-white shelf"></div>
