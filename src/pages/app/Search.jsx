@@ -244,133 +244,133 @@ export default React.memo(function Search() {
 
   return (
     <>
-    { bookMenu || collectionMenu ?
-    <>
-      {bookMenu ? 
-      <Suspense fallback={
-        <div className="w-screen h-screen bg-wood-side-dark">   
-          <div className="profile-main-loader">
-            <div className="loader">
-              <svg className="circular-loader"viewBox="25 25 50 50" >
-                <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      }>
-        <BookMenuItem
-        backFunction={setBookMenu}
-        setBookData={setBookData} 
-        setCollectionMenu={setCollectionMenu}
-        setCollectionData={setCollectionData}
-        currentIdx={currentIdx}
-        parseBack={parseBack}
-        data={bookData}
-      />
-      </Suspense>
-      : null }
-      {collectionMenu && !bookMenu ? 
-      <Suspense fallback={
-        <div className="w-screen h-screen bg-wood-side-dark">   
-          <div className="profile-main-loader">
-            <div className="loader">
-              <svg className="circular-loader"viewBox="25 25 50 50" >
-                <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      }>
-      <CollectionMenuItem
-        backFunction={setCollectionMenu}
-        data={collectionData}
-        setBookData={setBookData}
-        setBookMenu={setBookMenu}
-        setCurrentIdx={setCurrentIdx}
-        />
-        </Suspense> : null }
-    </> :
-    <Layout topbar={
-      <div className="px-2 pt-2 transition fully-rounded bg-black/50" style={{boxShadow: "0px 13px 16px -3px rgba(0,0,0,1)"}}>
-        <div className="relative flex w-full border-2 rounded-full bg-black/20 backdrop-blur-md border-white/20 inner-shadow-main">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className='absolute z-10 text-gray-300 top-3 left-3 w-7 h-7'>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-          </svg>
-          <input value={search} onChange={(event) => setSearch(event.target.value)} className="w-full px-3 py-2 pl-12 text-2xl font-medium text-white bg-transparent border-none rounded-full outline-white/20 focus:brightness-110 placeholder-white/60 backdrop-blur-2xl" placeholder="Search" />
-          <div onClick={() => filters ? setFilters(false) : setFilters(true)} className="absolute px-1 rounded-lg cursor-pointer text-white/50 top-2 right-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-9 h-9">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </div>
-        </div>
-        <div className={filters ? "px-6" : "hidden"}>
-          <div className="w-full border-2 border-t-0 backdrop-blur-md bg-black/30 inner-shadow-main rounded-b-2xl shadow-strong border-white/20" style={{boxShadow: "0px 13px 16px -3px rgba(0,0,0,1)"}}>
-        
-          {/* Book Borrower */}
-          <h2 className="px-5 py-1 pt-3 text-lg font-light text-gray-500">Borrowed by:</h2>
-          <Borrower getBooks={getBooks} className="px-2" setBorrower={setBorrower} borrower={borrower} placeholder="" />
-          
-          {/* Book Author */}
-          <h2 className="px-5 py-1 pt-3 text-lg font-light text-gray-500">Author:</h2>
-          <Author getBooks={getBooks} className="px-2 mb-1" setAuthor={setAuthor} author={author} placeholder="" />
-          
-          {/* Book Borrower Checkbox */}
-          <div onClick={() => borrowerCheckbox ? setBorrowerCheckbox(false) : setBorrowerCheckbox(true)}
-          className="flex items-center gap-2 px-4 pt-2 mb-4 cursor-pointer">
-            <input
-              type="checkbox"
-              className="p-3 rounded-lg outline-none pointer-events-nones darker inner-shadow-main"
-              id="borrower-checkbox"
-              name="borrower-checkbox"
-              onChange={e => setBorrowerCheckbox(e.target.checked)}
-              checked={borrowerCheckbox}
-            />
-            <label className="py-1 text-lg font-light text-gray-500 align-middle pointer-events-none select-none">Show only borrowed books</label>
-          </div>
-        </div>
-      </div>
-      </div>
-    }>
-      {collections.length != 0 ? <div className="mb-16" ref={top}></div> : <div className="mb-4" ref={top}></div>}
-      {author == "" && borrower == "" ? collections.map((collection, idx) => (
-        <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className="flex flex-col -mt-12 cursor-pointer " style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
-          <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
-            <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
-            { collection.expand.books ? collection.expand.books.map((book, idx) => {return(
-              <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
-              {book.coverImage ?
-                <img key={idx.toString()} id={idx.toString()} alt="Book cover image" className="h-40 my-4 rounded-md cursor-pointer pointer-events-none z-60 touch shadow-book" src={getThumbImageUrl(book.id, book.coverImage)} />
-                :
-                <img key={idx.toString()} id={idx.toString()} alt="No book cover image" className="h-40 my-4 rounded-md cursor-pointer pointer-events-none z-60 touch shadow-book" src={noImage} />}
+      { bookMenu || collectionMenu ?
+      <>
+        {bookMenu ? 
+        <Suspense fallback={
+          <div className="w-screen h-screen bg-wood-side-dark">   
+            <div className="profile-main-loader">
+              <div className="loader">
+                <svg className="circular-loader"viewBox="25 25 50 50" >
+                  <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
+                </svg>
               </div>
-            )}) : null }
-            <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+            </div>
           </div>
-          {collection.expand.books ? 
-            <div className="pl-4 text-xl text-white shelf"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
-            :
-            <div className="pl-4 text-xl text-white shelf mt-36"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
+        }>
+          <BookMenuItem
+          backFunction={setBookMenu}
+          setBookData={setBookData} 
+          setCollectionMenu={setCollectionMenu}
+          setCollectionData={setCollectionData}
+          currentIdx={currentIdx}
+          parseBack={parseBack}
+          data={bookData}
+        />
+        </Suspense>
+        : null }
+        {collectionMenu && !bookMenu ? 
+        <Suspense fallback={
+          <div className="w-screen h-screen bg-wood-side-dark">   
+            <div className="profile-main-loader">
+              <div className="loader">
+                <svg className="circular-loader"viewBox="25 25 50 50" >
+                  <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        }>
+        <CollectionMenuItem
+          backFunction={setCollectionMenu}
+          data={collectionData}
+          setBookData={setBookData}
+          setBookMenu={setBookMenu}
+          setCurrentIdx={setCurrentIdx}
+          />
+          </Suspense> : null }
+      </> :
+      <Layout topbar={
+        <div className="px-2 pt-2 transition fully-rounded bg-black/50" style={{boxShadow: "0px 13px 16px -3px rgba(0,0,0,1)"}}>
+          <div className="relative flex w-full border-2 rounded-full bg-black/20 backdrop-blur-md border-white/20 inner-shadow-main">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className='absolute z-10 text-gray-300 top-3 left-3 w-7 h-7'>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input value={search} onChange={(event) => setSearch(event.target.value)} className="w-full px-3 py-2 pl-12 text-2xl font-medium text-white bg-transparent border-none rounded-full outline-white/20 focus:brightness-110 placeholder-white/60 backdrop-blur-2xl" placeholder="Search" />
+            <div onClick={() => filters ? setFilters(false) : setFilters(true)} className="absolute px-1 rounded-lg cursor-pointer text-white/50 top-2 right-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-9 h-9">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </div>
+          </div>
+          <div className={filters ? "px-6" : "hidden"}>
+            <div className="w-full border-2 border-t-0 backdrop-blur-md bg-black/30 inner-shadow-main rounded-b-2xl shadow-strong border-white/20" style={{boxShadow: "0px 13px 16px -3px rgba(0,0,0,1)"}}>
+          
+            {/* Book Borrower */}
+            <h2 className="px-5 py-1 pt-3 text-lg font-light text-gray-500">Borrowed by:</h2>
+            <Borrower getBooks={getBooks} className="px-2" setBorrower={setBorrower} borrower={borrower} placeholder="" />
+            
+            {/* Book Author */}
+            <h2 className="px-5 py-1 pt-3 text-lg font-light text-gray-500">Author:</h2>
+            <Author getBooks={getBooks} className="px-2 mb-1" setAuthor={setAuthor} author={author} placeholder="" />
+            
+            {/* Book Borrower Checkbox */}
+            <div onClick={() => borrowerCheckbox ? setBorrowerCheckbox(false) : setBorrowerCheckbox(true)}
+            className="flex items-center gap-2 px-4 pt-2 mb-4 cursor-pointer">
+              <input
+                type="checkbox"
+                className="p-3 rounded-lg outline-none pointer-events-nones darker inner-shadow-main"
+                id="borrower-checkbox"
+                name="borrower-checkbox"
+                onChange={e => setBorrowerCheckbox(e.target.checked)}
+                checked={borrowerCheckbox}
+              />
+              <label className="py-1 text-lg font-light text-gray-500 align-middle pointer-events-none select-none">Show only borrowed books</label>
+            </div>
+          </div>
+        </div>
+        </div>
+      }>
+        {collections.length != 0 ? <div className="mb-16" ref={top}></div> : <div className="mb-4" ref={top}></div>}
+        {author == "" && borrower == "" ? collections.map((collection, idx) => (
+          <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className="flex flex-col -mt-12 cursor-pointer " style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
+            <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
+              <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+              { collection.expand.books ? collection.expand.books.map((book, idx) => {return(
+                <div key={idx.toString()} id={idx.toString()} className="z-50 snap-center min-w-max">
+                {book.coverImage ?
+                  <img key={idx.toString()} id={idx.toString()} alt="Book cover image" className="h-40 my-4 rounded-md cursor-pointer pointer-events-none z-60 touch shadow-book" src={getThumbImageUrl(book.id, book.coverImage)} />
+                  :
+                  <img key={idx.toString()} id={idx.toString()} alt="No book cover image" className="h-40 my-4 rounded-md cursor-pointer pointer-events-none z-60 touch shadow-book" src={noImage} />}
+                </div>
+              )}) : null }
+              <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+            </div>
+            {collection.expand.books ? 
+              <div className="pl-4 text-xl text-white shelf"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
+              :
+              <div className="pl-4 text-xl text-white shelf mt-36"><p className="absolute select-none bottom-4 text-shadow left-2">{collection.name ? collection.name : "No name"}</p></div>
+            }
+          </div>
+        )) : null}
+        <div ref={collectionRef}></div>
+        {/*books[0] ? <h2 className="w-full px-4 py-2 mb-4 -mt-16 text-xl border-b-2 text-white/60 bg-black/50 border-b-white/60">Books</h2> : null */}
+        <div className="flex flex-col gap-2" style={collections.length != 0 ? {marginTop: "-0rem"} : {}}>
+        {books.map((book, idx) => (
+        <div key={idx.toString()} id={idx.toString()}>
+          {book.borrowedBy.length == 0 ?
+          <BookMenuItem2 className="flex gap-1 px-2 py-2 mx-2 rounded-lg cursor-pointer bg-black/40 backdrop-blur-sm outline-white/10 outline" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} /> :
+          <BookMenuItem2 className="flex gap-1 px-2 py-2 mx-2 border-4 border-double rounded-lg cursor-pointer backdrop-blur-lg bg-black/60 border-white/50 brightness-50" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} />
           }
         </div>
-      )) : null}
-      <div ref={collectionRef}></div>
-      {/*books[0] ? <h2 className="w-full px-4 py-2 mb-4 -mt-16 text-xl border-b-2 text-white/60 bg-black/50 border-b-white/60">Books</h2> : null */}
-      <div className="flex flex-col gap-2" style={collections.length != 0 ? {marginTop: "-0rem"} : {}}>
-      {books.map((book, idx) => (
-      <div key={idx.toString()} id={idx.toString()}>
-        {book.borrowedBy.length == 0 ?
-        <BookMenuItem2 className="flex gap-1 px-2 py-2 mx-2 rounded-lg cursor-pointer bg-black/40 backdrop-blur-sm outline-white/10 outline" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} /> :
-        <BookMenuItem2 className="flex gap-1 px-2 py-2 mx-2 border-4 border-double rounded-lg cursor-pointer backdrop-blur-lg bg-black/60 border-white/50 brightness-50" setBookData={setBookData} book={book} setBookMenu={setBookMenu} setCurrentIdx={setCurrentIdx} idx={idx} />
-        }
-      </div>
-      ))}
-      </div>
-      {books.length > 1 || collections.length > 1 ? null : <div className=''></div>}
-      <div ref={bookRef}></div>
-    </Layout>
-    }
+        ))}
+        </div>
+        {books.length > 1 || collections.length > 1 ? null : <div className=''></div>}
+        <div ref={bookRef}></div>
+      </Layout>
+      }
     </>
-  )
+  );
 });
 
 

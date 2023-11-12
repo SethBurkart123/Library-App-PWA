@@ -90,6 +90,8 @@ function EditCollection(props) {
   const [books, setBooks] = useState([]);
   const [items, setItems] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   const ranOnce = useRef(false);
 
 
@@ -115,6 +117,7 @@ function EditCollection(props) {
   }
 
   const submit = async () => {
+    setLoading(true);
     let itemsArray = [];
     if (items) {
       itemsArray = items.map(({id}) => (id));
@@ -130,9 +133,9 @@ function EditCollection(props) {
     try {
       const record = await client.collection('collection').update(props.data.id, data);
 
-      //reload to update search
       window.location.reload(false);
     } catch(err) {
+      setLoading(false);
       alert("Error: " + err.message);
     }
   }
@@ -262,7 +265,10 @@ function EditCollection(props) {
       <div className="flex gap-4 pt-4">
         <a className="warning-button" onClick={() => {props.setDeletePrompt(true), console.log("test")}}>Delete</a>
         <a onClick={() => props.setEditMode(false)} className="ml-auto secondary-button">Cancel</a>
-        <button onClick={() => {submit()}} className="mr-0 primary-button">Submit</button>
+        { loading ?
+          <button disabled className="flex gap-2 mr-0 select-none primary-button"><span className="my-auto">Submitting...</span> <LoadingSpinner width={24} /></button> :
+          <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
+        }
       </div>
     </div>
   )

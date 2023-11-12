@@ -10,6 +10,7 @@ import noImage from '../../../images/noImage.jpeg';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { global, getImageUrl, getThumbImageUrl } from '../../../globalVars';
 import Layout from '../../../components/layout';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 
 export default function ViewBook(props) {
@@ -60,6 +61,8 @@ export default function ViewBook(props) {
 
   const [displayImage, setDisplayImage] = useState(false);
   const [deletePrompt, setDeletePrompt] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const temp1 = useRef(false);
   const collectionRef = useRef(null);
@@ -162,9 +165,11 @@ export default function ViewBook(props) {
     SetOtherImagesUrl(props.data.otherImages, props.data.otherImages.length-1);
   }
 
-
-
   async function submit() {
+    if (loading) return;
+
+    setLoading(true);
+
     //construct payload
     const data = {
       "name": bookName,
@@ -197,6 +202,8 @@ export default function ViewBook(props) {
         const record = await client.collection('collection').update(item.id, collectionData);
       } catch(err) {
         console.error(err);
+        alert("Sorry, there was an error. Try again and if the issue persists contact support!");
+        setLoading(false);
       }
     });
 
@@ -401,7 +408,7 @@ export default function ViewBook(props) {
       <input className="input-text" type="date" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} />
       <h2 className="py-2 pr-4 text-lg font-light text-white">Description</h2>
       <textarea maxLength={5000} rows="18" type="text" className="input-text" placeholder="" value={description} onChange={(e) => setDescription(e.target.value)} />
-      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span sclassName="italic text-gray-300">(optional)</span></h2>
+      <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
       <div className="px-2 py-2 rounded-lg shadow-inner bg-black/40 backdrop-blur-sm">
         <div className="relative">
           <input maxLength={128} className="input-text" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />
@@ -512,7 +519,10 @@ export default function ViewBook(props) {
         <a className="warning-button" onClick={() => {setDeletePrompt(true)}}>Delete</a>
         <div className="flex justify-end">
           <a onClick={() => setEditMode(false)} className="mr-4 cursor-pointer select-none secondary-button">Cancel</a> 
-          <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
+          { loading ?
+            <button disabled className="flex gap-2 mr-0 select-none primary-button"><span className="my-auto">Submitting...</span> <LoadingSpinner width={24} /></button> :
+            <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
+          }
         </div>
       </div>
       
@@ -529,7 +539,7 @@ export default function ViewBook(props) {
     <div class="min-h-[calc(70.5vh+1px)]">
       {/* Scrollable Book Images */}
       <div className="z-10 flex items-baseline gap-4 mb-4 overflow-x-scroll justify-right snap-mandatory snap-x">
-        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+        <div className="z-50 text-transparent select-none min-w-max">Me mentally dying inside right now :)</div>
         <div className="z-20 snap-center min-w-max" onClick={props.data.coverImage ? () => {setLargeImage(props.data.coverImage), setLargeImageBookID(props.data.id), setDisplayImage(true)} : null}>
           <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={props.data.coverImage ? getImageUrl(props.data.id, props.data.coverImage) : props.data.spineImage ? null : noImage} />
         </div>
@@ -542,7 +552,7 @@ export default function ViewBook(props) {
             <img className="h-64 rounded-md shadow-2xl cursor-pointer shadow-black" src={image ? getImageUrl(props.data.id, image) : noImage} />
           </div>
         ))}
-        <div className="z-50 text-transparent select-none min-w-max">AGHHHHHHHHHHHH!!! SAVE ME!!!!!</div>
+        <div className="z-50 text-transparent select-none min-w-max">Me mentally dying inside right now :)</div>
       </div>
       <div className="px-4 pb-8 bg-black/40 drop-shadow-strong">
         <h2 className="text-3xl text-white">{props.data.name ? props.data.name : <span className="text-gray-100">Unknown Title</span>}
