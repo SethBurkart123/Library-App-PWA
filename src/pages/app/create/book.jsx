@@ -189,37 +189,25 @@ export default function createBook() {
 
   return(
     <Layout topbar={
-      
       <div className="flex">
-      {
-        CreateBook ?
-        <>
-          <button className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2 border-b-white inner-shadow-main bg-black/20 backdrop-blur-md">Book</button>
-          <button onClick={() => {setCreateBook(false)}} className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2 text-white/20 backdrop-blur-md bg-black/50 border-b-white/20 inner-shadow-main">Collection</button>
-        </>
-        :
-        <>
-          <button onClick={() => {setCreateBook(true)}} className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center border-b-2 text-white/20 bg-black/50 backdrop-blur-md border-b-white/20 inner-shadow-main">Book</button>
-          <button className="flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center text-white border-b-2 border-b-white inner-shadow-main bg-black/20 backdrop-blur-md">Collection</button>
-        </>
-      }
-    </div>
-      
+        <button className={`flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center transition text-white border-b-2 inner-shadow-main backdrop-blur-md ${CreateBook ? 'border-b-white bg-black/20' : 'bg-black/50 border-b-white/20'}`} onClick={() => setCreateBook(true)}>Book</button>
+        <button className={`flex-1 w-full h-full px-4 pt-3 pb-2 text-xl font-bold text-center transition text-white border-b-2 inner-shadow-main backdrop-blur-md ${CreateBook ? 'bg-black/50 border-b-white/20' : 'border-b-white bg-black/20'}`} onClick={() => setCreateBook(false)}>Collection</button>
+      </div>
     }>
-    <div>
+    <>
       { CreateBook ?
-      <div className="px-4">        
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Title</h2>
+      <div className="flex flex-col gap-4 px-4">        
+        <h2 className="pr-4 text-lg font-light text-white ">Book Title</h2>
         <input maxLength={100} type="text" className="input-text" value={bookName} onChange={(e) => setBookName(e.target.value)} />
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Author <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white ">Book Author <span className="italic text-gray-300">(optional)</span></h2>
         <input maxLength={100} className="input-text" type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)} />
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Publisher <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white ">Book Publisher <span className="italic text-gray-300">(optional)</span></h2>
         <input maxLength={100} className="input-text" type="text" value={bookPublisher} onChange={(e) => setBookPublisher(e.target.value)} />
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Date Published <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white ">Date Published <span className="italic text-gray-300">(optional)</span></h2>
         <input className="input-text" type="date" value={datePublished} onChange={(e) => setDatePublished(e.target.value)} />
-        <h2 className="py-2 pr-4 text-lg font-light text-white">Description <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white">Description <span className="italic text-gray-300">(optional)</span></h2>
         <textarea maxLength={5000} rows="18" type="text" className="input-text" onChange={(e) => setDescription(e.target.value)}/>
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white ">Book Borrower <span className="italic text-gray-300">(optional)</span></h2>
         <div className="px-2 py-2 rounded-lg shadow-inner bg-black/40 backdrop-blur-sm">
           <div className="relative">
             <input maxLength={128} className="w-full px-4 py-2 rounded-lg outline-none input-text" type="text" value={borrower} onChange={(e) => {setBorrower(e.target.value), getBorrowers(e.target.value), setBorrowerSelection(-2)}} />
@@ -254,7 +242,7 @@ export default function createBook() {
           : null}
         </div>
         
-        <h2 className="py-2 pr-4 text-lg font-light text-white ">Main Images</h2>
+        <h2 className="pr-4 text-lg font-light text-white ">Main Images</h2>
         <div className="flex gap-2 px-2 py-2 text-white outline-none input-text">
 
             
@@ -286,7 +274,7 @@ export default function createBook() {
                 }
             </div>
         </div>
-        <h2 className="py-2 pr-4 text-lg font-light text-white">Other Images <span className="italic text-gray-300">(optional)</span></h2>
+        <h2 className="pr-4 text-lg font-light text-white">Other Images <span className="italic text-gray-300">(optional)</span></h2>
         <div className="flex flex-wrap gap-4 px-4 py-2 text-white outline-none input-text">
             <img alt="Add another image" className="h-32 pointer-events-auto image" src="../images/plus.svg" onClick={() => OtherImages.current.click()} />
             <input type="file" className="hidden" ref={OtherImages} accept="image/*" name="file" onChange={(event) => {handleCompressedOther(event.target.files[0])}} />
@@ -311,9 +299,8 @@ export default function createBook() {
       </div>
       :
       <CreateCollection />
-    }
-          
-    </div>
+    }     
+    </>
     </Layout>
   )
 };

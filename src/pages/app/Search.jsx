@@ -70,6 +70,9 @@ export default React.memo(function Search() {
   
   const collectionRef = useRef(null);
   const bookRef = useRef(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
   const collectionObserver = useRef(null);
   const bookObserver = useRef(null);
@@ -123,6 +126,7 @@ export default React.memo(function Search() {
         client.cancelRequest('bookSearch');
         // cancel previous search requests
         client.cancelRequest('bookSearch');
+
         //request books
         const response = await client.collection('book').getList(bookPage, 7, {
           filter: `name ~ "${search}" && author ~ "${author}" && borrowedBy ~ "${borrower}" ${borrowerCheckbox ? "&& borrowedBy != null" : ""}`,
@@ -136,12 +140,19 @@ export default React.memo(function Search() {
         //reset page on search
         if (bookPage == 1) {
           setBookPage(1);
+          setLoading(false);
+          setError('')
           setBooks(response.items);
         } else {
           //append books previous books
           setBooks(books.concat(response.items));
         }
-      } catch(err) {}
+      } catch(err) {
+        if (!err.message.includes('autocancelled')) {
+          setError(err.message);
+          setLoading(false);
+        }
+      }
     }
     //if maxBookPages <1 then fix
     if (maxBookPages <= 0) {setMaxBookPages(1)}
@@ -172,8 +183,6 @@ export default React.memo(function Search() {
     // request the books
     getBooks(1);
   }, [search]);
-
-    
 
   useEffect(() => { //on bookRef update
     // initiate observer api for page load on scroll
@@ -331,6 +340,27 @@ export default React.memo(function Search() {
         </div>
         </div>
       }>
+
+      {
+        loading &&
+        <div className="profile-main-loader">
+          <div className="loader">
+            <svg className="circular-loader"viewBox="25 25 50 50" >
+              <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
+            </svg>
+          </div>
+        </div>
+      }
+
+      {
+        error != '' &&
+        <div className='w-screen h-screen'>
+          <p className=''>There was an error!</p>
+          <p>{error?.message}</p>
+          <button></button>
+        </div>
+      }
+
         {collections.length != 0 ? <div className="mb-16" ref={top}></div> : <div className="mb-4" ref={top}></div>}
         {author == "" && borrower == "" ? collections.map((collection, idx) => (
           <div onClick={() => {setCollectionData(collection), setCollectionMenu(true)}} className="flex flex-col -mt-12 cursor-pointer " style={{minHeight: 120}} key={idx.toString()} id={idx.toString()}>
@@ -354,7 +384,7 @@ export default React.memo(function Search() {
           </div>
         )) : null}
         <div ref={collectionRef}></div>
-        {/*books[0] ? <h2 className="w-full px-4 py-2 mb-4 -mt-16 text-xl border-b-2 text-white/60 bg-black/50 border-b-white/60">Books</h2> : null */}
+
         <div className="flex flex-col gap-2" style={collections.length != 0 ? {marginTop: "-0rem"} : {}}>
         {books.map((book, idx) => (
         <div key={idx.toString()} id={idx.toString()}>
