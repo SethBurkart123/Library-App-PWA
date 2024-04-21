@@ -137,20 +137,18 @@ export default React.memo(function Search() {
           $cancelKey: `bookSearch`
         });
         
+        setBottomLoading(false);
         if (response.totalPages > 0) {
           setMaxBookPages(response.totalPages); //keep maxBookPages in sync
-          setBottomLoading(false);
         }
         //reset page on search
         if (bookPage == 1) {
           setBookPage(1);
           setLoading(false);
-          setBottomLoading(false);
           setError('')
           setBooks(response.items);
         } else {
           //append books previous books
-          setBottomLoading(false);
           setBooks(books.concat(response.items));
         }
       } catch(err) {
@@ -265,14 +263,8 @@ export default React.memo(function Search() {
       <>
         {bookMenu ? 
         <Suspense fallback={
-          <div className="w-screen h-screen bg-wood-side-dark">   
-            <div className="profile-main-loader">
-              <div className="loader">
-                <svg className="circular-loader"viewBox="25 25 50 50" >
-                  <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-                </svg>
-              </div>
-            </div>
+          <div className="flex items-center justify-center w-screen h-screen bg-wood-side-dark">   
+            <LoadingSpinner />
           </div>
         }>
           <BookMenuItem
@@ -288,14 +280,8 @@ export default React.memo(function Search() {
         : null }
         {collectionMenu && !bookMenu ? 
         <Suspense fallback={
-          <div className="w-screen h-screen bg-wood-side-dark">   
-            <div className="profile-main-loader">
-              <div className="loader">
-                <svg className="circular-loader"viewBox="25 25 50 50" >
-                  <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-                </svg>
-              </div>
-            </div>
+          <div className="flex items-center justify-center w-screen h-screen bg-wood-side-dark">   
+            <LoadingSpinner />
           </div>
         }>
         <CollectionMenuItem
@@ -351,12 +337,8 @@ export default React.memo(function Search() {
 
       {
         loading &&
-        <div className="profile-main-loader">
-          <div className="loader">
-            <svg className="circular-loader"viewBox="25 25 50 50" >
-              <circle className="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" strokeWidth="2" />
-            </svg>
-          </div>
+        <div className="flex items-center justify-center w-screen h-screen">   
+          <LoadingSpinner />
         </div>
       }
 
