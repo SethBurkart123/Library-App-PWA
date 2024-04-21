@@ -16,7 +16,7 @@ function SignIn() {
   }, [])
 
   //setup variables
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const [values, setValues] = React.useState({
     email: '',
@@ -39,10 +39,11 @@ function SignIn() {
   
   async function loginWithEmail(email, password) {
     try {
-      const authData = await client.collection('users').authWithPassword(email, password);
-        window.location.href = '/'; //redirect to search page
+      setLoginError('');
+      await client.collection('users').authWithPassword(email, password);
+      window.location.href = '/'; //redirect to search page
     } catch(err) {
-      setLoginError(true);
+      setLoginError(err.message);
       console.log(err);
     }
   }
@@ -65,9 +66,9 @@ function SignIn() {
 
           {/* Login Error Message */}
           <form onSubmit={handleSubmit}>
-            {loginError ?
+            {loginError != '' ?
               <div className="relative px-4 py-3 mt-5 mb-2 text-red-700 bg-red-100 border border-red-600 rounded" role="alert">
-              <span className="block sm:inline">The email or password was incorrect.</span>
+              <span className="block sm:inline">{loginError}</span>
               </div> : null
             }
 
