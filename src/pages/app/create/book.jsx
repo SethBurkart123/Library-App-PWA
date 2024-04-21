@@ -8,6 +8,7 @@ import CreateCollection from './collection';
 import global  from '../../../globalVars';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import Layout from '../../../components/layout';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default function createBook() {
   const client = new PocketBase(global.pocketbaseDomain);
@@ -53,6 +54,8 @@ export default function createBook() {
   const [borrower, setBorrower] = useState('');
   const [borrowers, setBorrowers] = useState([]);
   const [borrowerSelection, setBorrowerSelection] = useState(-2);
+
+  const [loading, setLoading] = useState(false);
 
   //create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
@@ -105,16 +108,17 @@ export default function createBook() {
 
 
   async function submit() {
-    const data = {
-    "name": bookName,
-    "author": authorName,
-    "publisher": bookPublisher,
-    "publishDate": datePublished,
-    "description": description,
-    "user": client.authStore.model.id,
-    "borrowedBy": borrower,
-    };
+    setLoading(true);
 
+    const data = {
+      "name": bookName,
+      "author": authorName,
+      "publisher": bookPublisher,
+      "publishDate": datePublished,
+      "description": description,
+      "user": client.authStore.model.id,
+      "borrowedBy": borrower,
+    };
 
     const Images = new FormData();
     Images.append("spineImage", spineImage);
@@ -122,7 +126,7 @@ export default function createBook() {
     otherImages.forEach((image) => {
       Images.append("otherImages", image);
     });
-    createBook(data, Images);
+    await createBook(data, Images);
   }
 
   async function createBook(data, images) {
@@ -131,8 +135,12 @@ export default function createBook() {
       const imagesRecord = await client.collection('book').update(record.id, images);
       console.log(record)
       // redirect to search page
+      setLoading(false);
       navigate('/');
-    } catch (err) {}
+    } catch (err) {
+      alert(err);
+      setLoading(false);
+    }
   }
 
   function remove(idx) {
@@ -294,7 +302,10 @@ export default function createBook() {
         </div>
         <div className="flex gap-4 pt-4">
             <a href="/" className="ml-auto secondary-button">Cancel</a>
-            <button onClick={() => {submit()} } className="mr-0 primary-button bg-green-500/20">Submit</button>
+            { loading ?
+              <button disabled className="flex gap-2 mr-0 select-none primary-button"><span className="my-auto">Submitting...</span> <LoadingSpinner width={24} /></button> :
+              <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
+            }
         </div>
       </div>
       :
