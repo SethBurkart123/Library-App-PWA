@@ -121,6 +121,11 @@ export default React.memo(function Search() {
    
   }
 
+  const disableBottomLoader = async () => {
+    await delay(500);
+    setBottomLoading(false);
+  }
+
 
   const getBooks = async (bookPage) => {
     if (bookPage <= maxBookPages) {
@@ -139,17 +144,20 @@ export default React.memo(function Search() {
         
         setBottomLoading(false);
         if (response.totalPages > 0) {
-          setMaxBookPages(response.totalPages); //keep maxBookPages in sync
+          setMaxBookPages(response.totalPages);
+          disableBottomLoader()
         }
         //reset page on search
         if (bookPage == 1) {
           setBookPage(1);
           setLoading(false);
           setError('')
+          setBottomLoading(false);
           setBooks(response.items);
         } else {
           //append books previous books
           setBooks(books.concat(response.items));
+          setBottomLoading(false);
         }
       } catch(err) {
         if (!err.message.includes('autocancelled')) {
@@ -211,7 +219,7 @@ export default React.memo(function Search() {
     }
     return () => {
       if (bookObserver.current) {
-      bookObserver.current.disconnect();
+        bookObserver.current.disconnect();
       }
     };
   }, [bookRef]);
