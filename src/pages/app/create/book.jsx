@@ -301,11 +301,11 @@ export default function createBook() {
 
         </div>
         <div className="flex gap-4 pt-4">
-            <a href="/" className="ml-auto secondary-button">Cancel</a>
-            { loading ?
-              <button disabled className="flex gap-2 mr-0 select-none primary-button"><span className="my-auto">Submitting...</span> <LoadingSpinner width={24} /></button> :
-              <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
-            }
+          <a href="/" className="ml-auto secondary-button">Cancel</a>
+          { loading ?
+            <button disabled className="flex gap-2 mr-0 select-none primary-button"><span className="my-auto">Submitting...</span> <LoadingSpinner width={24} /></button> :
+            <button onClick={() => {submit()} } className="mr-0 select-none primary-button">Submit</button>
+          }
         </div>
       </div>
       :

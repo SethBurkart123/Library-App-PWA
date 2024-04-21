@@ -11,6 +11,7 @@ import { Borrower } from './../../components/borrower';
 import { Author } from '../../components/author';
 import noImage from '../../images/noImage.jpeg';
 import Layout from '../../components/layout';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const CollectionMenuItem = lazy(() => import('./view/Collection'));
 const BookMenuItem = lazy(() => import('./view/Book'));
@@ -73,6 +74,8 @@ export default React.memo(function Search() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const [bottomLoading, setBottomLoading] = useState(false);
   
   const collectionObserver = useRef(null);
   const bookObserver = useRef(null);
@@ -136,20 +139,24 @@ export default React.memo(function Search() {
         
         if (response.totalPages > 0) {
           setMaxBookPages(response.totalPages); //keep maxBookPages in sync
+          setBottomLoading(false);
         }
         //reset page on search
         if (bookPage == 1) {
           setBookPage(1);
           setLoading(false);
+          setBottomLoading(false);
           setError('')
           setBooks(response.items);
         } else {
           //append books previous books
+          setBottomLoading(false);
           setBooks(books.concat(response.items));
         }
       } catch(err) {
         if (!err.message.includes('autocancelled')) {
           setError(err.message);
+          setBottomLoading(false);
           setLoading(false);
         }
       }
@@ -189,6 +196,7 @@ export default React.memo(function Search() {
     bookObserver.current = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
       if (entry.isIntersecting) {
+        setBottomLoading(true);
         setBookPage((p) => ( p + 1 ));
       }
       });
@@ -396,6 +404,14 @@ export default React.memo(function Search() {
         ))}
         </div>
         {books.length > 1 || collections.length > 1 ? null : <div className=''></div>}
+
+        {
+          bottomLoading &&
+          <div className="relative flex justify-center w-full h-24">
+            <LoadingSpinner />
+          </div>
+        }
+
         <div ref={bookRef}></div>
       </Layout>
       }
