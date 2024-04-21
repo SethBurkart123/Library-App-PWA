@@ -124,6 +124,8 @@ export default React.memo(function Search() {
   const disableBottomLoader = async () => {
     await delay(500);
     setBottomLoading(false);
+    await delay(500);
+    setBottomLoading(false);
   }
 
 
@@ -352,10 +354,10 @@ export default React.memo(function Search() {
 
       {
         error != '' &&
-        <div className='w-screen h-screen'>
-          <p className=''>There was an error!</p>
-          <p>{error?.message}</p>
-          <button></button>
+        <div className='flex flex-col items-center justify-center w-screen h-screen gap-2'>
+          <p className='text-3xl font-semibold'>Error!</p>
+          <p className='mb-2 rounded-md bg-black/30'>{error}</p>
+          <button onClick={() => window.location.reload()} className='mr-0 select-none primary-button'>Try again?</button>
         </div>
       }
 
