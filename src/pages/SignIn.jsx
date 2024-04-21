@@ -43,6 +43,7 @@ function SignIn() {
       await client.collection('users').authWithPassword(email, password);
       window.location.href = '/'; //redirect to search page
     } catch(err) {
+      setSubmitted(false);
       setLoginError(err.message);
       console.log(err);
     }
@@ -95,7 +96,11 @@ function SignIn() {
             {/* Submit Button */}
             <div className="flex flex-wrap mt-6 -mx-3">
               <div className="w-full px-3">
-                <button type="submit" className="btn fancy rounded-full hover:bg-[#374635] w-full text-white bg-[#465943] shadow-black/20 shadow-xl">Sign in</button>
+                {
+                  submitted ?
+                  <button className="btn fancy rounded-full hover:bg-[#374635] w-full text-white bg-[#465943] shadow-black/20 shadow-xl" disabled>Signing in...</button> :
+                  <button type="submit" className="btn fancy rounded-full hover:bg-[#374635] w-full text-white bg-[#465943] shadow-black/20 shadow-xl">Sign in</button>
+                }
               </div>
             </div>
           </form>
